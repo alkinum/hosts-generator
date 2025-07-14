@@ -1,19 +1,17 @@
 import React from 'react';
 import { AlertCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { DNSResult, PresetItem } from '../types';
+import { PresetItem } from '../types';
 import { PresetDropdown } from './PresetDropdown';
 
 interface InputPanelProps {
   domains: string;
   isResolving: boolean;
   validationErrors: string[];
-  results: DNSResult[];
   presets: PresetItem[];
   onDomainsChange: (value: string) => void;
   onResolve: () => void;
   onClear: () => void;
-  onDownload: () => void;
   onPresetSelect: (value: string) => void;
 }
 
@@ -21,19 +19,14 @@ export const InputPanel: React.FC<InputPanelProps> = ({
   domains,
   isResolving,
   validationErrors,
-  results,
   presets,
   onDomainsChange,
   onResolve,
   onClear,
-  onDownload,
   onPresetSelect
 }) => {
   const { t } = useTranslation();
   const hasPresets = presets.length > 0;
-  const hasResults = results.length > 0;
-  const successCount = results.filter(r => r.ip).length;
-  const errorCount = results.filter(r => !r.ip).length;
 
   return (
     <div className="bg-gray-900 border-r border-gray-700 p-4">

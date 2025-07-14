@@ -29,7 +29,6 @@ function App() {
   const [showHistory, setShowHistory] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
-  const [isFullscreen, setIsFullscreen] = useState(false);
   const [settings, setSettings] = useState<UserSettings>(loadSettings());
   const [presets, setPresets] = useState<PresetItem[]>([]);
 
@@ -39,47 +38,19 @@ function App() {
     addToTerminal,
     typeToTerminal,
     resetTerminal
-  } = useTerminal([
-    `hosts-generator v${packageJson.version}`,
-    `${t('generated.resolvedUsing', { provider: selectedProvider.label })}`,
-    '',
-    t('misc.ready'),
-    ''
-  ]);
+  } = useTerminal([]);
 
   const { isResolving, resolveDomains } = useDNSResolver({
-    onProgress: (domain, result, index) => {
-      if (!result.ip) {
-        typeToTerminal(`Resolving ${domain}...`, 0);
-      } else {
-        if (result.ip) {
-          addToTerminal(`✓ ${domain} → ${result.ip}`, 0);
-        } else {
-          addToTerminal(`✗ ${domain} → ${result.error || 'Failed'}`, 0);
-        }
-      }
-    }
+    onProgress: () => {}
   });
 
   // Initialize IndexedDB and initial terminal output
   useEffect(() => {
     historyDB.init().catch(console.error);
-    
-    // Initial terminal output with animation
-    addToTerminal(`hosts-generator v${packageJson.version}`, 0);
-    addToTerminal(`${t('generated.resolvedUsing', { provider: selectedProvider.label })}`, 200);
-    addToTerminal('', 400);
-    typeToTerminal(t('misc.ready'), 600);
-    addToTerminal('', 1100);
   }, []);
 
-  // Update terminal when provider changes (but not on initial load)
+  // Update terminal when provider changes
   useEffect(() => {
-    // Skip the first render (initial load)
-    const isInitialLoad = terminalOutput.length === 0;
-    if (isInitialLoad) return;
-    
-    // Clear terminal first
     resetTerminal([]);
     
     // Add animated output with delays
@@ -88,7 +59,7 @@ function App() {
     addToTerminal('', 400);
     typeToTerminal(t('misc.ready'), 600);
     addToTerminal('', 1100);
-  }, [selectedProvider]);
+  }, [selectedProvider, t]);
 
   const saveToHistory = async () => {
     if (results.length === 0) return;
@@ -268,34 +239,6 @@ function App() {
     setIsMinimized(!isMinimized);
   };
 
-  const handleToggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().then(() => {
-        setIsFullscreen(true);
-      }).catch((err) => {
-        console.error('Error attempting to enable fullscreen:', err);
-      });
-    } else {
-      document.exitFullscreen().then(() => {
-        setIsFullscreen(false);
-      }).catch((err) => {
-        console.error('Error attempting to exit fullscreen:', err);
-      });
-    }
-  };
-
-  // Listen for fullscreen changes
-  useEffect(() => {
-    const handleFullscreenChange = () => {
-      setIsFullscreen(!!document.fullscreenElement);
-    };
-
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    return () => {
-      document.removeEventListener('fullscreenchange', handleFullscreenChange);
-    };
-  }, []);
-
   const handlePresetSelect = (value: string) => {
     setDomains(value);
   };
@@ -324,7 +267,6 @@ function App() {
             onShowHistory={() => setShowHistory(true)}
             isMinimized={isMinimized}
             onMinimize={handleMinimize}
-            onToggleFullscreen={handleToggleFullscreen}
             onClose={handleClose}
             onShowSettings={() => setShowSettings(true)}
           />
@@ -336,12 +278,10 @@ function App() {
               domains={domains}
               isResolving={isResolving}
               validationErrors={validationErrors}
-              results={results}
               presets={presets}
               onDomainsChange={setDomains}
               onResolve={handleResolve}
               onClear={clearAll}
-              onDownload={downloadHostsFile}
               onPresetSelect={handlePresetSelect}
             />
 

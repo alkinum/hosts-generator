@@ -13,7 +13,6 @@ interface HeaderBarProps {
   onShowHistory: () => void;
   isMinimized: boolean;
   onMinimize: () => void;
-  onToggleFullscreen: () => void;
   onClose: () => void;
   onShowSettings: () => void;
 }
@@ -28,7 +27,6 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
   onShowHistory,
   isMinimized,
   onMinimize,
-  onToggleFullscreen,
   onClose,
   onShowSettings,
 }) => {
@@ -90,7 +88,6 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
           
           {/* Fullscreen Toggle Button */}
           <button
-            onClick={onToggleFullscreen}
             className="w-3 h-3 bg-green-500 rounded-full hover:bg-green-600 transition-all duration-200 flex items-center justify-center group relative"
             title="Toggle Fullscreen"
           >

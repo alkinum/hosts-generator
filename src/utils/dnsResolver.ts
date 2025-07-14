@@ -1,5 +1,12 @@
 import { DNSResult, DOHProvider } from '../types';
 
+interface DnsAnswer {
+  name: string;
+  type: number;
+  TTL: number;
+  data: string;
+}
+
 export const resolveDNS = async (domain: string, provider: DOHProvider): Promise<DNSResult> => {
   try {
     let url: string;
@@ -17,7 +24,7 @@ export const resolveDNS = async (domain: string, provider: DOHProvider): Promise
     const data = await response.json();
     
     if (data.Answer && data.Answer.length > 0) {
-      const ip = data.Answer.find((answer: any) => answer.type === 1)?.data;
+      const ip = data.Answer.find((answer: DnsAnswer) => answer.type === 1)?.data;
       return { domain, ip: ip || null };
     } else {
       return { domain, ip: null, error: 'No A record found' };

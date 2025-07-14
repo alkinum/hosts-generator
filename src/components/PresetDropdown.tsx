@@ -72,7 +72,7 @@ export const PresetDropdown: React.FC<PresetDropdownProps> = ({
             <div key={index} className="relative">
               <button
                 onClick={() => handleItemClick(preset)}
-                className="block w-full text-left px-3 py-2 text-sm text-gray-300 hover:bg-gray-700 transition-colors select-none flex items-center justify-between"
+                className="block w-full text-left px-3 py-2 text-sm text-gray-300 hover:bg-gray-700 transition-colors select-none items-center justify-between"
               >
                 <span>{preset.title}</span>
                 {preset.children && (
