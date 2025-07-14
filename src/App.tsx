@@ -68,13 +68,15 @@ function App() {
 
   // Update terminal when provider changes
   useEffect(() => {
-    resetTerminal([
-      `hosts-generator v${packageJson.version}`,
-      `${t('generated.resolvedUsing', { provider: selectedProvider.label })}`,
-      '',
-      t('misc.ready'),
-      ''
-    ]);
+    // Clear terminal first
+    resetTerminal([]);
+    
+    // Add animated output with delays
+    addToTerminal(`hosts-generator v${packageJson.version}`, 0);
+    addToTerminal(`${t('generated.resolvedUsing', { provider: selectedProvider.label })}`, 200);
+    addToTerminal('', 400);
+    typeToTerminal(t('misc.ready'), 600);
+    addToTerminal('', 1100);
   }, [selectedProvider, resetTerminal, t]);
 
   const saveToHistory = async () => {
