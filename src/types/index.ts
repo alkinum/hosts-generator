@@ -17,10 +17,11 @@ export interface ValidationResult {
 
 export interface PresetItem {
   title: string;
-  value?: string;
+  value?: string | string[];  // Support both string and string array
   children?: PresetItem[];
 }
 
 export interface UserSettings {
   presetSourceUrl: string;
+  customDnsProviders: DOHProvider[];
 }

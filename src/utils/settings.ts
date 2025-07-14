@@ -3,7 +3,8 @@ import { UserSettings } from '../types';
 const SETTINGS_KEY = 'hosts-generator-settings';
 
 export const defaultSettings: UserSettings = {
-  presetSourceUrl: ''
+  presetSourceUrl: '',
+  customDnsProviders: []
 };
 
 export const loadSettings = (): UserSettings => {

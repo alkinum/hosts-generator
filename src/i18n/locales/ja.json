@@ -1,0 +1,107 @@
+{
+  "header": {
+    "appTitle": "hostsジェネレーター",
+    "history": "履歴",
+    "settings": "設定",
+    "close": "閉じる",
+    "minimize": "最小化",
+    "toggleFullscreen": "全画面切り替え"
+  },
+  "input": {
+    "title": "入力",
+    "description": "ドメインまたはhostsエントリを入力",
+    "placeholder": "example.com\ngoogle.com\ngithub.com\n\n# またはhostsエントリを貼り付け:\n127.0.0.1 localhost",
+    "resolving": "解決中...",
+    "resolveDomains": "ドメインを解決",
+    "clear": "クリア",
+    "presets": "プリセット"
+  },
+  "terminal": {
+    "title": "出力",
+    "description": "リアルタイム解決ログ"
+  },
+  "preview": {
+    "title": "プレビュー",
+    "description": "生成されたhostsファイルの内容",
+    "success": "成功",
+    "failed": "失敗",
+    "total": "合計",
+    "includeLocalhost": "localhostエントリを含める",
+    "removeComments": "コメントを削除",
+    "copy": "コピー",
+    "copied": "コピー完了!",
+    "download": "ダウンロード"
+  },
+  "settings": {
+    "title": "設定",
+    "presetSourceUrl": "プリセットソースURL",
+    "presetSourceDescription": "外部ソースからプリセット設定を取得するURL",
+    "presetSourcePlaceholder": "プリセット設定を取得するURLを入力...",
+    "customDnsProviders": "カスタムDNSプロバイダー",
+    "customDnsProvidersDescription": "ドメイン解決用の独自のDNS-over-HTTPSプロバイダーを追加",
+    "addProvider": "プロバイダーを追加",
+    "addNewProvider": "新しいプロバイダーを追加",
+    "removeProvider": "プロバイダーを削除",
+    "noCustomProviders": "カスタムDNSプロバイダーが設定されていません",
+    "addCustomProviderHint": "「プロバイダーを追加」をクリックして、独自のDNS-over-HTTPSプロバイダーを追加",
+    "providerName": "プロバイダー名",
+    "providerNamePlaceholder": "例：cloudflare",
+    "displayLabel": "表示ラベル",
+    "displayLabelPlaceholder": "例：Cloudflare DNS",
+    "dnsOverHttpsUrl": "DNS-over-HTTPS URL",
+    "dnsOverHttpsUrlPlaceholder": "https://cloudflare-dns.com/dns-query",
+    "allFieldsRequired": "すべてのフィールドが必須です",
+    "invalidDnsProvider": "無効なDNSプロバイダー",
+    "providerValidated": "プロバイダーの検証に成功しました",
+    "validating": "検証中...",
+    "save": "保存",
+    "cancel": "キャンセル",
+    "fetchingPresets": "プリセットを取得中...",
+    "fetchPresetsSuccess": "プリセットの取得に成功しました",
+    "fetchPresetsFailed": "プリセットの取得に失敗しました",
+    "invalidPresetFormat": "無効なプリセット形式"
+  },
+  "history": {
+    "title": "履歴",
+    "clearAllRecords": "すべてのレコードをクリア",
+    "loadInput": "入力を読み込み",
+    "expand": "展開",
+    "collapse": "折りたたみ",
+    "inputContent": "入力内容:",
+    "outputContent": "出力内容:",
+    "noHistoryRecords": "履歴レコードはありません",
+    "loading": "読み込み中...",
+    "allRecordsLoaded": "すべてのレコードを読み込みました",
+    "confirmClearHistory": "すべての履歴レコードをクリアしてもよろしいですか？この操作は元に戻せません。"
+  },
+  "validation": {
+    "noValidDomains": "有効なドメインが見つかりません",
+    "invalidFormat": "無効な形式",
+    "invalidDomainFormat": "無効なドメイン形式",
+    "domainTooLong": "ドメインが長すぎます",
+    "validationFailed": "検証に失敗しました。エラーを修正してから再試行してください。"
+  },
+  "dns": {
+    "initializingResolver": "DNSリゾルバーを初期化中...",
+    "foundDomains": "解決する{{count}}個のドメインが見つかりました",
+    "usingProvider": "{{provider}} DNS over HTTPSを使用",
+    "maxConcurrentRequests": "最大同時リクエスト数: 5",
+    "resolutionCompleted": "DNS解決が完了しました。",
+    "successfullyResolved": "{{success}}/{{total}}個のドメインの解決に成功しました",
+    "resolutionFailed": "解決プロセスが失敗しました"
+  },
+  "generated": {
+    "hostsFileGenerated": "hostsジェネレーターによって生成されたHostsファイル",
+    "generatedOn": "生成日時",
+    "resolvedUsing": "{{provider}} DNS over HTTPSを使用して解決",
+    "defaultLocalhostEntries": "デフォルトのlocalhostエントリ",
+    "customEntries": "カスタムエントリ",
+    "noHostsEntries": "hostsエントリはまだ生成されていません\n出力を確認するためにいくつかのドメインを解決してください"
+  },
+  "misc": {
+    "ready": "ドメインの処理準備完了...",
+    "yesterday": "昨日",
+    "daysAgo": "{{days}}日前",
+    "closeConfirm": "アプリケーションを閉じてもよろしいですか？"
+  }
+}

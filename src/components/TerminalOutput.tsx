@@ -21,13 +21,14 @@ export const TerminalOutput: React.FC<TerminalOutputProps> = ({
   }, []);
 
   return (
-    <div className="lg:col-span-2 bg-black p-4 border-r border-gray-700">
+    <div className="lg:col-span-2 bg-black p-4">
       <div className="mb-3">
         <div className="text-green-500 text-sm mb-1 select-none">{t('terminal.title')}</div>
         <div className="text-gray-400 text-xs mb-3 select-none">{t('terminal.description')}</div>
       </div>
       
       <div className="h-80 overflow-y-auto bg-gray-950 border border-gray-800 rounded p-3 text-sm">
+        {/* 历史输出，不包含光标 */}
         {terminalOutput.map((line, index) => (
           <div key={index} className="mb-1 leading-relaxed">
             {line.startsWith('✓') ? (
@@ -43,17 +44,15 @@ export const TerminalOutput: React.FC<TerminalOutputProps> = ({
             )}
           </div>
         ))}
-        {currentLine && (
-          <div className="text-gray-300 leading-relaxed select-text">
-            {currentLine}
-            {showCursor && <span className="bg-green-400 text-black">█</span>}
-          </div>
-        )}
-        {!currentLine && (
-          <div className="text-gray-300 leading-relaxed">
-            {showCursor && <span className="bg-green-400 text-black animate-pulse">█</span>}
-          </div>
-        )}
+        
+        {/* 当前输入行和光标 - 只在这里显示光标 */}
+        <div className="text-gray-300 leading-relaxed select-text">
+          <span className="text-blue-400">$ </span>
+          <span>{currentLine}</span>
+          {showCursor && (
+            <span className="text-green-400 animate-pulse">_</span>
+          )}
+        </div>
       </div>
     </div>
   );

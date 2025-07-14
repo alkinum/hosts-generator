@@ -1,13 +1,25 @@
 {
   "name": "hosts-generator",
-  "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
+  "author": "Alkinum",
+  "license": "MIT",
+  "homepage": "https://github.com/alkinum/hosts-generator",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alkinum/hosts-generator.git"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:run": "vitest run",
+    "pages:dev": "wrangler pages dev dist",
+    "pages:deploy": "npm run build && wrangler pages deploy dist",
+    "pages:deploy:prod": "npm run build && wrangler pages deploy dist --env production"
   },
   "dependencies": {
     "i18next": "^25.3.2",
@@ -19,19 +31,26 @@
     "zod": "^4.0.5"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
     "@types/react": "^18.3.23",
     "@types/react-dom": "^18.3.7",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
     "@vitejs/plugin-react": "^4.6.0",
+    "@vitest/ui": "^3.2.4",
     "autoprefixer": "^10.4.21",
     "eslint": "^8.57.1",
     "eslint-plugin-react": "^7.34.2",
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-react-refresh": "^0.4.20",
+    "fake-indexeddb": "^6.0.1",
+    "jsdom": "^26.1.0",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.8.3",
-    "vite": "^5.4.19"
+    "vite": "^5.4.19",
+    "vitest": "^3.2.4",
+    "wrangler": "^4.24.3"
   }
 }

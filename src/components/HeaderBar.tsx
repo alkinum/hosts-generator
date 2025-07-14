@@ -10,6 +10,7 @@ interface HeaderBarProps {
   isResolving: boolean;
   onProviderSelect: (provider: DOHProvider) => void;
   onToggleProviderMenu: () => void;
+  onCloseProviderMenu: () => void;
   onShowHistory: () => void;
   isMinimized: boolean;
   onMinimize: () => void;
@@ -24,6 +25,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
   isResolving,
   onProviderSelect,
   onToggleProviderMenu,
+  onCloseProviderMenu,
   onShowHistory,
   isMinimized,
   onMinimize,
@@ -36,7 +38,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (providerMenuRef.current && !providerMenuRef.current.contains(event.target as Node)) {
-        onToggleProviderMenu();
+        onCloseProviderMenu();
       }
     };
 
@@ -47,7 +49,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [showProviderMenu, onToggleProviderMenu]);
+  }, [showProviderMenu, onCloseProviderMenu]);
 
   return (
     <div className={`bg-gray-900 border border-gray-700 ${isMinimized ? 'rounded-lg' : 'rounded-t-lg'} px-4 py-3 flex items-center justify-between transition-all duration-300`}>

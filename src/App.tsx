@@ -31,6 +31,18 @@ const App: React.FC = () => {
   const [isMinimized, setIsMinimized] = useState(false);
   const [settings, setSettings] = useState<UserSettings>(loadSettings());
   const [presets, setPresets] = useState<PresetItem[]>([]);
+  const [allProviders, setAllProviders] = useState<DOHProvider[]>([...DOH_PROVIDERS]);
+
+  // Update providers when settings change
+  useEffect(() => {
+    const combinedProviders = [...DOH_PROVIDERS, ...settings.customDnsProviders];
+    setAllProviders(combinedProviders);
+    
+    // If current selected provider is no longer available, reset to first provider
+    if (!combinedProviders.find(p => p.name === selectedProvider.name)) {
+      setSelectedProvider(combinedProviders[0]);
+    }
+  }, [settings.customDnsProviders, selectedProvider.name]);
 
   const {
     terminalOutput,
@@ -71,21 +83,58 @@ const App: React.FC = () => {
     };
   }, [selectedProvider, i18n.isInitialized, addToTerminal, typeToTerminal, resetTerminal, t]);
 
-  const saveToHistory = async () => {
-    if (results.length === 0) return;
+  const saveToHistory = async (resolvedResults: DNSResult[], inputContent: string) => {
+    if (resolvedResults.length === 0) return;
     
     try {
+      const hostsContent = generateHostsFileContent(resolvedResults);
       await historyDB.addRecord({
-        inputContent: domains,
-        outputContent: generateHostsFile(),
+        inputContent: inputContent,
+        outputContent: hostsContent,
         timestamp: Date.now(),
-        successCount: results.filter(r => r.ip).length,
-        totalCount: results.length,
+        successCount: resolvedResults.filter(r => r.ip).length,
+        totalCount: resolvedResults.length,
         provider: selectedProvider.label
       });
     } catch (error) {
       console.error('Failed to save to history:', error);
     }
+  };
+
+  const generateHostsFileContent = (resolvedResults: DNSResult[]) => {
+    let content: string[] = [];
+    
+    if (!removeComments) {
+      const header = includeLocalhost ? [
+        `# ${t('generated.hostsFileGenerated')}`,
+        `# ${t('generated.generatedOn')}: ${new Date().toISOString()}`,
+        `# ${t('generated.resolvedUsing', { provider: selectedProvider.label })}`,
+        '',
+        `# ${t('generated.defaultLocalhostEntries')}`,
+        '127.0.0.1 localhost',
+        '::1 localhost',
+        '',
+        `# ${t('generated.customEntries')}`
+      ] : [
+        `# ${t('generated.hostsFileGenerated')}`,
+        `# ${t('generated.generatedOn')}: ${new Date().toISOString()}`,
+        `# ${t('generated.resolvedUsing', { provider: selectedProvider.label })}`,
+        '',
+        `# ${t('generated.customEntries')}`
+      ];
+      content = [...header];
+    } else if (includeLocalhost) {
+      content = [
+        '127.0.0.1 localhost',
+        '::1 localhost'
+      ];
+    }
+
+    const entries = resolvedResults
+      .filter(result => result.ip)
+      .map(result => `${result.ip} ${result.domain}`);
+
+    return [...content, ...entries].join('\n');
   };
 
   // Load presets when settings change or on initial load
@@ -155,10 +204,8 @@ const App: React.FC = () => {
         addToTerminal(t('dns.successfullyResolved', { success: resolvedResults.filter(r => r.ip).length, total: validDomains.length }), 700);
         setResults(resolvedResults);
         
-        // Save to history after successful resolution
-        setTimeout(() => {
-          saveToHistory();
-        }, 1000);
+        // Save to history immediately after setting results
+        saveToHistory(resolvedResults, domains);
       }, validDomains.length * 200 + 2000);
     } catch (error) {
       addToTerminal(`✗ ${t('dns.resolutionFailed')}`, 0);
@@ -166,39 +213,7 @@ const App: React.FC = () => {
   };
 
   const generateHostsFile = () => {
-    let content: string[] = [];
-    
-    if (!removeComments) {
-      const header = includeLocalhost ? [
-        `# ${t('generated.hostsFileGenerated')}`,
-        `# ${t('generated.generatedOn')}: ${new Date().toISOString()}`,
-        `# ${t('generated.resolvedUsing', { provider: selectedProvider.label })}`,
-        '',
-        `# ${t('generated.defaultLocalhostEntries')}`,
-        '127.0.0.1 localhost',
-        '::1 localhost',
-        '',
-        `# ${t('generated.customEntries')}`
-      ] : [
-        `# ${t('generated.hostsFileGenerated')}`,
-        `# ${t('generated.generatedOn')}: ${new Date().toISOString()}`,
-        `# ${t('generated.resolvedUsing', { provider: selectedProvider.label })}`,
-        '',
-        `# ${t('generated.customEntries')}`
-      ];
-      content = [...header];
-    } else if (includeLocalhost) {
-      content = [
-        '127.0.0.1 localhost',
-        '::1 localhost'
-      ];
-    }
-
-    const entries = results
-      .filter(result => result.ip)
-      .map(result => `${result.ip} ${result.domain}`);
-
-    return [...content, ...entries].join('\n');
+    return generateHostsFileContent(results);
   };
 
   const downloadHostsFile = () => {
@@ -238,6 +253,10 @@ const App: React.FC = () => {
     }
   };
 
+  const closeProviderMenu = () => {
+    setShowProviderMenu(false);
+  };
+
   // Window control handlers
   const handleClose = () => {
     if (window.confirm(t('misc.closeConfirm'))) {
@@ -269,11 +288,12 @@ const App: React.FC = () => {
         }`}>
           <HeaderBar
             selectedProvider={selectedProvider}
-            providers={DOH_PROVIDERS}
+            providers={allProviders}
             showProviderMenu={showProviderMenu}
             isResolving={isResolving}
             onProviderSelect={handleProviderSelect}
             onToggleProviderMenu={toggleProviderMenu}
+            onCloseProviderMenu={closeProviderMenu}
             onShowHistory={() => setShowHistory(true)}
             isMinimized={isMinimized}
             onMinimize={handleMinimize}

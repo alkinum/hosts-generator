@@ -38,7 +38,9 @@ export const PresetDropdown: React.FC<PresetDropdownProps> = ({
 
   const handleItemClick = (item: PresetItem) => {
     if (item.value) {
-      onSelect(item.value);
+      // Convert value to string if it's an array
+      const value = Array.isArray(item.value) ? item.value.join('\n') : item.value;
+      onSelect(value);
       setIsOpen(false);
       setOpenSubmenu(null);
     } else if (item.children) {
@@ -46,8 +48,10 @@ export const PresetDropdown: React.FC<PresetDropdownProps> = ({
     }
   };
 
-  const handleSubmenuItemClick = (value: string) => {
-    onSelect(value);
+  const handleSubmenuItemClick = (value: string | string[]) => {
+    // Convert value to string if it's an array
+    const valueString = Array.isArray(value) ? value.join('\n') : value;
+    onSelect(valueString);
     setIsOpen(false);
     setOpenSubmenu(null);
   };

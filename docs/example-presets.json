@@ -1,0 +1,129 @@
+[
+  {
+    "title": "Microsoft Services",
+    "children": [
+      {
+        "title": "Office 365 & Outlook",
+        "value": [
+          "office.com",
+          "office365.com",
+          "outlook.com",
+          "hotmail.com",
+          "live.com",
+          "login.microsoftonline.com",
+          "accounts.microsoft.com"
+        ]
+      },
+      {
+        "title": "Xbox & Gaming",
+        "value": [
+          "xbox.com",
+          "xboxlive.com",
+          "accounts.xboxlive.com",
+          "xsts.auth.xboxlive.com",
+          "xbl.io",
+          "xboxservices.com"
+        ]
+      },
+      {
+        "title": "Teams & OneDrive",
+        "value": [
+          "teams.microsoft.com",
+          "teams.live.com",
+          "config.teams.microsoft.com",
+          "onedrive.com",
+          "1drv.ms",
+          "sharepoint.com"
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Development Tools",
+    "children": [
+      {
+        "title": "GitHub & Git",
+        "value": [
+          "github.com",
+          "github.io",
+          "githubassets.com",
+          "raw.githubusercontent.com",
+          "api.github.com",
+          "gitlab.com",
+          "bitbucket.org"
+        ]
+      },
+      {
+        "title": "Package Managers",
+        "value": [
+          "npmjs.org",
+          "registry.npmjs.org",
+          "pypi.org",
+          "files.pythonhosted.org",
+          "rubygems.org",
+          "packagist.org"
+        ]
+      },
+      {
+        "title": "Cloud Services",
+        "value": [
+          "docker.com",
+          "docker.io",
+          "aws.amazon.com",
+          "cloud.google.com",
+          "azure.microsoft.com"
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Gaming Platforms",
+    "children": [
+      {
+        "title": "Steam & Valve",
+        "value": [
+          "steam.com",
+          "steamcommunity.com",
+          "steampowered.com",
+          "steamstatic.com",
+          "steamcdn-a.akamaihd.net"
+        ]
+      },
+      {
+        "title": "Epic Games & Others",
+        "value": [
+          "epicgames.com",
+          "fortnite.com",
+          "unrealengine.com",
+          "ea.com",
+          "origin.com",
+          "playstation.com"
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Communication Tools",
+    "value": [
+      "discord.com",
+      "slack.com",
+      "zoom.us",
+      "teams.microsoft.com",
+      "skype.com",
+      "telegram.org",
+      "whatsapp.com"
+    ]
+  },
+  {
+    "title": "Google Services",
+    "value": [
+      "google.com",
+      "gmail.com",
+      "youtube.com",
+      "googleapis.com",
+      "gstatic.com",
+      "google-analytics.com",
+      "android.com"
+    ]
+  }
+]

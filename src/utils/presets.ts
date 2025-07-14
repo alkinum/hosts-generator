@@ -5,8 +5,8 @@ import { PresetItem } from '../types';
 const PresetItemSchema: z.ZodType<PresetItem> = z.lazy(() =>
   z.object({
     title: z.string().min(1, 'Title is required'),
-    value: z.string().optional(),
-    children: z.array(PresetItemSchema).max(1).optional(), // Only one level of nesting allowed
+    value: z.union([z.string(), z.array(z.string())]).optional(), // Support both string and string array
+    children: z.array(PresetItemSchema).optional(), // Remove max(1) to allow multiple children
   })
 );
 
