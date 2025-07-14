@@ -235,6 +235,7 @@ function App() {
             selectedProvider={selectedProvider}
             includeLocalhost={includeLocalhost}
             onIncludeLocalhostChange={setIncludeLocalhost}
+            onDownload={downloadHostsFile}
           />
         </div>
       </div>

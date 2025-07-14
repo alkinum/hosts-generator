@@ -71,37 +71,6 @@ export const InputPanel: React.FC<InputPanelProps> = ({
           CLEAR
         </button>
       </div>
-
-      {/* Stats */}
-      {hasResults && (
-        <div className="mt-4 space-y-2 text-xs">
-          <div className="text-green-500 mb-2 select-none">STATISTICS</div>
-          <div className="flex justify-between">
-            <span className="text-gray-400 select-none">Success:</span>
-            <span className="text-green-400 select-none">{successCount}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-gray-400 select-none">Failed:</span>
-            <span className="text-red-400 select-none">{errorCount}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-gray-400 select-none">Total:</span>
-            <span className="text-blue-400 select-none">{results.length}</span>
-          </div>
-          
-          {successCount > 0 && (
-            <button
-              onClick={onDownload}
-              className="w-full mt-3 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded text-sm transition-colors flex items-center justify-center gap-2 select-none"
-            >
-              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-              DOWNLOAD HOSTS
-            </button>
-          )}
-        </div>
-      )}
     </div>
   );
 };
