@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BackgroundEffects } from './components/BackgroundEffects';
 import { HeaderBar } from './components/HeaderBar';
@@ -17,7 +17,7 @@ import { DOH_PROVIDERS } from './utils/constants';
 import { DNSResult, DOHProvider, PresetItem, UserSettings } from './types';
 import packageJson from '../package.json';
 
-function App() {
+const App: React.FC = () => {
   const { t } = useTranslation();
   const [domains, setDomains] = useState('');
   const [results, setResults] = useState<DNSResult[]>([]);
