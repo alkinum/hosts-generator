@@ -110,7 +110,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
           </button>
         </div>
         {!isMinimized && (
-          <span className="text-gray-400 text-sm select-none">{t('appTitle', language)}</span>
+          <span className="text-gray-400 text-sm select-none">{t('header.appTitle')}</span>
         )}
       </div>
       

@@ -172,7 +172,6 @@ export const PreviewSection: React.FC<PreviewSectionProps> = ({
                     {t('preview.copy')}
                   </>
                 )}
-                {t('preview.download')}
               </button>
               
               {successCount > 0 && (
