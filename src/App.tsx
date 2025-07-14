@@ -250,13 +250,19 @@ function App() {
   }, []);
 
   return (
-    <div className={`min-h-screen bg-black text-green-400 font-mono relative overflow-hidden select-none transition-all duration-300 ${
-      isMinimized ? 'transform scale-95 opacity-50' : ''
-    }`}>
+    <div className="min-h-screen bg-black text-green-400 font-mono relative overflow-hidden select-none">
       <BackgroundEffects />
 
-      <div className="relative z-10 p-4">
-        <div className="max-w-7xl mx-auto">
+      <div className={`relative z-10 transition-all duration-500 ease-in-out ${
+        isMinimized 
+          ? 'p-4 max-w-fit mx-0' 
+          : 'p-4'
+      }`}>
+        <div className={`transition-all duration-500 ease-in-out ${
+          isMinimized 
+            ? 'max-w-fit' 
+            : 'max-w-7xl mx-auto'
+        }`}>
           <HeaderBar
             selectedProvider={selectedProvider}
             providers={DOH_PROVIDERS}
@@ -271,8 +277,8 @@ function App() {
             onClose={handleClose}
           />
 
-          <div className={`grid lg:grid-cols-3 gap-0 border-l border-r border-gray-700 transition-all duration-300 ${
-            isMinimized ? 'opacity-30 pointer-events-none' : ''
+          <div className={`grid lg:grid-cols-3 gap-0 border-l border-r border-gray-700 transition-all duration-500 ease-in-out overflow-hidden ${
+            isMinimized ? 'h-0 opacity-0 pointer-events-none' : 'h-auto opacity-100'
           }`}>
             <InputPanel
               domains={domains}
@@ -292,8 +298,8 @@ function App() {
           </div>
 
           <PreviewSection
-            className={`transition-all duration-300 ${
-              isMinimized ? 'opacity-30 pointer-events-none' : ''
+            className={`transition-all duration-500 ease-in-out overflow-hidden ${
+              isMinimized ? 'h-0 opacity-0 pointer-events-none' : 'h-auto opacity-100'
             }`}
             results={results}
             selectedProvider={selectedProvider}
