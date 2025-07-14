@@ -26,7 +26,7 @@ export const fetchPresets = async (url: string): Promise<PresetItem[]> => {
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
-    
+
     const data = await response.json();
     return validatePresets(data);
   } catch (error) {

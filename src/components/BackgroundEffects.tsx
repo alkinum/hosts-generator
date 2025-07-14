@@ -11,13 +11,13 @@ export const BackgroundEffects: React.FC = () => {
         `,
         backgroundSize: '50px 50px'
       }}></div>
-      
+
       {/* Animated Lines */}
       <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-green-500 to-transparent animate-pulse"></div>
       <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-green-500 to-transparent animate-pulse" style={{ animationDelay: '1s' }}></div>
       <div className="absolute top-0 left-0 w-px h-full bg-gradient-to-b from-transparent via-green-500 to-transparent animate-pulse" style={{ animationDelay: '0.5s' }}></div>
       <div className="absolute top-0 right-0 w-px h-full bg-gradient-to-b from-transparent via-green-500 to-transparent animate-pulse" style={{ animationDelay: '1.5s' }}></div>
-      
+
       {/* Floating Particles */}
       {[...Array(20)].map((_, i) => (
         <div

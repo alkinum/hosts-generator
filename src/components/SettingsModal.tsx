@@ -30,12 +30,12 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     setFormData(settings);
   }, [settings]);
 
-  const handleSave = async () => {
+  const handleSave = () => {
     setStatus('saving');
     setErrorMessage('');
-    
+
     try {
-      await onSave(formData);
+      onSave(formData);
       setStatus('success');
       setTimeout(() => {
         setStatus('idle');
@@ -59,9 +59,33 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     onClose();
   };
 
+  const validateUrl = (url: string): { valid: boolean; error?: string } => {
+    if (!url.trim()) {
+      return { valid: false, error: t('settings.urlRequired') };
+    }
+
+    try {
+      const urlObj = new URL(url);
+      if (!urlObj.protocol.startsWith('http')) {
+        return { valid: false, error: t('settings.httpUrlRequired') };
+      }
+      return { valid: true };
+    } catch {
+      return { valid: false, error: t('settings.invalidUrlFormat') };
+    }
+  };
+
   const handleAddProvider = async () => {
     if (!newProvider.name || !newProvider.url || !newProvider.label) {
       setValidationError(t('settings.allFieldsRequired'));
+      setValidationStatus('error');
+      return;
+    }
+
+    // First validate URL format
+    const urlValidation = validateUrl(newProvider.url);
+    if (!urlValidation.valid) {
+      setValidationError(urlValidation.error || t('settings.invalidUrlFormat'));
       setValidationStatus('error');
       return;
     }
@@ -70,7 +94,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     setValidationError('');
 
     const validation = await validateDnsProvider(newProvider);
-    
+
     if (!validation.valid) {
       setValidationError(validation.error || t('settings.invalidDnsProvider'));
       setValidationStatus('error');
@@ -105,12 +129,12 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   return (
     <>
       {/* Backdrop */}
-      <div 
+      <div
         className="fixed inset-0 bg-black bg-opacity-50 z-50 transition-opacity"
       />
-      
+
       {/* Modal */}
-      <div 
+      <div
         className="fixed inset-0 z-50 flex items-center justify-center p-4"
         onClick={handleBackdropClick}
       >
@@ -240,7 +264,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                         className="w-full bg-black border border-gray-600 rounded p-2 text-green-400 text-sm placeholder-gray-600 focus:border-green-500 focus:outline-none"
                       />
                     </div>
-                    
+
                     {/* Validation status */}
                     {validationStatus === 'error' && validationError && (
                       <div className="flex items-center gap-2 text-red-400 text-sm bg-red-400/10 p-2 rounded">
@@ -248,7 +272,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                         <span>{validationError}</span>
                       </div>
                     )}
-                    
+
                     {validationStatus === 'success' && (
                       <div className="flex items-center gap-2 text-green-400 text-sm bg-green-400/10 p-2 rounded">
                         <CheckCircle className="w-4 h-4 flex-shrink-0" />

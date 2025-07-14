@@ -22,7 +22,7 @@ export const resolveDNS = async (domain: string, provider: DOHProvider): Promise
 
     const response = await fetch(url, { headers });
     const data = await response.json();
-    
+
     if (data.Answer && data.Answer.length > 0) {
       const ip = data.Answer.find((answer: DnsAnswer) => answer.type === 1)?.data;
       return { domain, ip: ip || null };

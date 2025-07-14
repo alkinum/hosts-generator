@@ -2,7 +2,7 @@ import { DOHProvider } from '../types';
 
 export const validateDnsProvider = async (provider: DOHProvider): Promise<{ valid: boolean; error?: string }> => {
   try {
-    // Validate URL format
+    // Validate URL format first (this is already done in the component, but kept for completeness)
     const url = new URL(provider.url);
     if (!url.protocol.startsWith('https')) {
       return { valid: false, error: 'DNS provider must use HTTPS' };
@@ -17,7 +17,7 @@ export const validateDnsProvider = async (provider: DOHProvider): Promise<{ vali
       headers: {
         'Accept': 'application/dns-json',
       },
-      signal: AbortSignal.timeout(5000), // 5 second timeout
+      signal: AbortSignal.timeout(5000),
     });
 
     if (!response.ok) {
@@ -26,7 +26,6 @@ export const validateDnsProvider = async (provider: DOHProvider): Promise<{ vali
 
     const data = await response.json();
     
-    // Check if response has expected DNS structure
     if (!data || typeof data !== 'object' || !('Status' in data)) {
       return { valid: false, error: 'Invalid DNS response format' };
     }
@@ -35,7 +34,6 @@ export const validateDnsProvider = async (provider: DOHProvider): Promise<{ vali
       return { valid: false, error: `DNS query failed with status ${data.Status}` };
     }
 
-    // Check if we got answers
     if (!data.Answer || !Array.isArray(data.Answer) || data.Answer.length === 0) {
       return { valid: false, error: 'DNS provider returned no answers' };
     }

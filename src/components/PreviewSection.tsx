@@ -7,6 +7,7 @@ interface PreviewSectionProps {
   className?: string;
   results: DNSResult[];
   selectedProvider: DOHProvider;
+  generationTimestamp: string | null;
   includeLocalhost: boolean;
   removeComments: boolean;
   onIncludeLocalhostChange: (include: boolean) => void;
@@ -18,6 +19,7 @@ export const PreviewSection: React.FC<PreviewSectionProps> = ({
   className = '',
   results,
   selectedProvider,
+  generationTimestamp,
   includeLocalhost,
   removeComments,
   onIncludeLocalhostChange,
@@ -28,12 +30,13 @@ export const PreviewSection: React.FC<PreviewSectionProps> = ({
   const [copySuccess, setCopySuccess] = useState(false);
 
   const generateHostsFile = () => {
+    const generationTime = generationTimestamp || new Date().toISOString();
     let content: string[] = [];
-    
+
     if (!removeComments) {
       const header = includeLocalhost ? [
         `# ${t('generated.hostsFileGenerated')}`,
-        `# ${t('generated.generatedOn')}: ${new Date().toISOString()}`,
+        `# ${t('generated.generatedOn')}: ${generationTime}`,
         `# ${t('generated.resolvedUsing', { provider: selectedProvider.label })}`,
         '',
         `# ${t('generated.defaultLocalhostEntries')}`,
@@ -43,7 +46,7 @@ export const PreviewSection: React.FC<PreviewSectionProps> = ({
         `# ${t('generated.customEntries')}`
       ] : [
         `# ${t('generated.hostsFileGenerated')}`,
-        `# ${t('generated.generatedOn')}: ${new Date().toISOString()}`,
+        `# ${t('generated.generatedOn')}: ${generationTime}`,
         `# ${t('generated.resolvedUsing', { provider: selectedProvider.label })}`,
         '',
         `# ${t('generated.customEntries')}`
@@ -101,7 +104,7 @@ export const PreviewSection: React.FC<PreviewSectionProps> = ({
           <div className="text-gray-400 text-xs select-none">{t('preview.description')}</div>
         </div>
       </div>
-      
+
       {/* Controls and actions */}
       {hasResults && (
         <div className="mb-3 space-y-2">
@@ -117,8 +120,8 @@ export const PreviewSection: React.FC<PreviewSectionProps> = ({
                     className="sr-only"
                   />
                   <div className={`w-4 h-4 border-2 rounded transition-all duration-200 ${
-                    includeLocalhost 
-                      ? 'border-green-500 bg-green-500' 
+                    includeLocalhost
+                      ? 'border-green-500 bg-green-500'
                       : 'border-gray-600 bg-transparent group-hover:border-green-400'
                   }`}>
                     {includeLocalhost && (
@@ -130,7 +133,7 @@ export const PreviewSection: React.FC<PreviewSectionProps> = ({
                 </div>
                 <span className="group-hover:text-green-400 transition-colors">{t('preview.includeLocalhost')}</span>
               </label>
-              
+
               {/* Remove comments checkbox */}
               <label className="flex items-center gap-2 text-xs text-gray-400 select-none cursor-pointer group">
                 <div className="relative">
@@ -141,8 +144,8 @@ export const PreviewSection: React.FC<PreviewSectionProps> = ({
                     className="sr-only"
                   />
                   <div className={`w-4 h-4 border-2 rounded transition-all duration-200 ${
-                    removeComments 
-                      ? 'border-green-500 bg-green-500' 
+                    removeComments
+                      ? 'border-green-500 bg-green-500'
                       : 'border-gray-600 bg-transparent group-hover:border-green-400'
                   }`}>
                     {removeComments && (
@@ -155,7 +158,7 @@ export const PreviewSection: React.FC<PreviewSectionProps> = ({
                 <span className="group-hover:text-green-400 transition-colors">{t('preview.removeComments')}</span>
               </label>
             </div>
-          
+
             <div className="flex items-center gap-2">
               <button
                 onClick={copyToClipboard}
@@ -173,22 +176,30 @@ export const PreviewSection: React.FC<PreviewSectionProps> = ({
                   </>
                 )}
               </button>
-              
+
               {successCount > 0 && (
                 <button
                   onClick={onDownload}
                   className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white py-1 px-3 rounded text-xs transition-colors select-none"
                 >
                   <Download className="w-3 h-3" />
-                  {t('download')}
+                  {t('preview.download')}
                 </button>
               )}
             </div>
           </div>
         </div>
       )}
-      
-      <pre className="bg-black border border-gray-800 rounded p-3 text-xs overflow-x-auto max-h-40 overflow-y-auto min-h-28">
+
+      <pre className="bg-black border border-gray-800 rounded p-3 text-xs overflow-x-auto max-h-40 overflow-y-auto min-h-28
+      [&::-webkit-scrollbar]:w-1.5
+      [&::-webkit-scrollbar]:h-1.5
+      [&::-webkit-scrollbar-track]:bg-gray-900/50
+      [&::-webkit-scrollbar-track]:rounded
+      [&::-webkit-scrollbar-thumb]:bg-gray-600/60
+      [&::-webkit-scrollbar-thumb]:rounded
+      [&::-webkit-scrollbar-thumb:hover]:bg-gray-500/80
+      [&::-webkit-scrollbar-corner]:bg-gray-900/50">
         <code className="text-gray-300 leading-relaxed select-text">
           {hasResults ? generateHostsFile() : `# ${t('generated.noHostsEntries')}`}
         </code>

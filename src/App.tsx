@@ -32,12 +32,16 @@ const App: React.FC = () => {
   const [settings, setSettings] = useState<UserSettings>(loadSettings());
   const [presets, setPresets] = useState<PresetItem[]>([]);
   const [allProviders, setAllProviders] = useState<DOHProvider[]>([...DOH_PROVIDERS]);
+  const [isConnected, setIsConnected] = useState<boolean>(true);
+  const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
+  const [generationTimestamp, setGenerationTimestamp] = useState<string | null>(null);
+  const [isFullyResolving, setIsFullyResolving] = useState<boolean>(false);
 
   // Update providers when settings change
   useEffect(() => {
     const combinedProviders = [...DOH_PROVIDERS, ...settings.customDnsProviders];
     setAllProviders(combinedProviders);
-    
+
     // If current selected provider is no longer available, reset to first provider
     if (!combinedProviders.find(p => p.name === selectedProvider.name)) {
       setSelectedProvider(combinedProviders[0]);
@@ -64,19 +68,19 @@ const App: React.FC = () => {
   // Initialize terminal output once and update when provider changes
   useEffect(() => {
     if (!i18n.isInitialized) return;
-    
+
     resetTerminal([]);
-    
+
     // Store timeout IDs for cleanup
     const timeouts: number[] = [];
-    
+
     // Add animated output with delays
     timeouts.push(setTimeout(() => addToTerminal(`hosts-generator v${packageJson.version}`), 0));
     timeouts.push(setTimeout(() => addToTerminal(`${t('generated.resolvedUsing', { provider: selectedProvider.label })}`), 200));
     timeouts.push(setTimeout(() => addToTerminal(''), 400));
     timeouts.push(setTimeout(() => typeToTerminal(t('misc.ready')), 600));
     timeouts.push(setTimeout(() => addToTerminal(''), 1100));
-    
+
     // Cleanup function to clear all timeouts
     return () => {
       timeouts.forEach(timeout => clearTimeout(timeout));
@@ -85,9 +89,9 @@ const App: React.FC = () => {
 
   const saveToHistory = async (resolvedResults: DNSResult[], inputContent: string) => {
     if (resolvedResults.length === 0) return;
-    
+
     try {
-      const hostsContent = generateHostsFileContent(resolvedResults);
+      const hostsContent = generateHostsFileContent(resolvedResults, generationTimestamp || undefined);
       await historyDB.addRecord({
         inputContent: inputContent,
         outputContent: hostsContent,
@@ -101,13 +105,14 @@ const App: React.FC = () => {
     }
   };
 
-  const generateHostsFileContent = (resolvedResults: DNSResult[]) => {
+  const generateHostsFileContent = (resolvedResults: DNSResult[], timestamp?: string) => {
+    const generationTime = timestamp || new Date().toISOString();
     let content: string[] = [];
-    
+
     if (!removeComments) {
       const header = includeLocalhost ? [
         `# ${t('generated.hostsFileGenerated')}`,
-        `# ${t('generated.generatedOn')}: ${new Date().toISOString()}`,
+        `# ${t('generated.generatedOn')}: ${generationTime}`,
         `# ${t('generated.resolvedUsing', { provider: selectedProvider.label })}`,
         '',
         `# ${t('generated.defaultLocalhostEntries')}`,
@@ -117,7 +122,7 @@ const App: React.FC = () => {
         `# ${t('generated.customEntries')}`
       ] : [
         `# ${t('generated.hostsFileGenerated')}`,
-        `# ${t('generated.generatedOn')}: ${new Date().toISOString()}`,
+        `# ${t('generated.generatedOn')}: ${generationTime}`,
         `# ${t('generated.resolvedUsing', { provider: selectedProvider.label })}`,
         '',
         `# ${t('generated.customEntries')}`
@@ -136,6 +141,50 @@ const App: React.FC = () => {
 
     return [...content, ...entries].join('\n');
   };
+
+  // Check connection status with interval
+  useEffect(() => {
+    const checkConnection = async () => {
+      try {
+        const testDomain = 'google.com';
+        const dnsQuery = `${selectedProvider.url}?name=${testDomain}&type=A`;
+
+        const response = await fetch(dnsQuery, {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/dns-json',
+          },
+          signal: AbortSignal.timeout(5000)
+        });
+
+        if (!response.ok) {
+          setIsConnected(false);
+          return;
+        }
+
+        const data = await response.json();
+
+        if (!data || typeof data !== 'object' || !('Status' in data)) {
+          setIsConnected(false);
+          return;
+        }
+
+        if (data.Status !== 0) {
+          setIsConnected(false);
+          return;
+        }
+
+        setIsConnected(true);
+      } catch (error) {
+        setIsConnected(false);
+      }
+    };
+
+    checkConnection();
+    const interval = setInterval(checkConnection, 300000);
+
+    return () => clearInterval(interval);
+  }, [selectedProvider.url]);
 
   // Load presets when settings change or on initial load
   useEffect(() => {
@@ -166,9 +215,11 @@ const App: React.FC = () => {
   const handleResolve = async () => {
     if (!domains.trim()) return;
 
-    const { domains: validDomains, errors } = validateDomains(domains);
+    setIsFullyResolving(true);
+
+    const { domains: validDomains, errors } = validateDomains(domains, t);
     setValidationErrors(errors);
-    
+
     if (errors.length > 0) {
       addToTerminal('$ hosts-generator --validate', 0);
       addToTerminal('', 100);
@@ -177,15 +228,21 @@ const App: React.FC = () => {
       });
       addToTerminal('', 200 + errors.length * 100);
       addToTerminal(t('validation.validationFailed'), 300 + errors.length * 100);
+      setIsFullyResolving(false);
       return;
     }
 
     if (validDomains.length === 0) {
       addToTerminal(`✗ ${t('validation.noValidDomains')}`, 0);
+      setIsFullyResolving(false);
       return;
     }
 
     setResults([]);
+    setGenerationTimestamp(null);
+
+    const timestamp = new Date().toISOString();
+    setGenerationTimestamp(timestamp);
 
     addToTerminal(`$ hosts-generator --resolve --provider=${selectedProvider.name}`, 0);
     addToTerminal('', 100);
@@ -197,18 +254,22 @@ const App: React.FC = () => {
 
     try {
       const resolvedResults = await resolveDomains(validDomains, selectedProvider);
-      
+
       setTimeout(() => {
         addToTerminal('', 500);
         addToTerminal(t('dns.resolutionCompleted'), 600);
         addToTerminal(t('dns.successfullyResolved', { success: resolvedResults.filter(r => r.ip).length, total: validDomains.length }), 700);
         setResults(resolvedResults);
-        
+
         // Save to history immediately after setting results
         saveToHistory(resolvedResults, domains);
+
+        // Mark resolution as complete after all terminal output
+        setIsFullyResolving(false);
       }, validDomains.length * 200 + 2000);
     } catch (error) {
       addToTerminal(`✗ ${t('dns.resolutionFailed')}`, 0);
+      setIsFullyResolving(false);
     }
   };
 
@@ -237,6 +298,7 @@ const App: React.FC = () => {
       ''
     ]);
     setResults([]);
+    setGenerationTimestamp(null);
     setValidationErrors([]);
   };
 
@@ -268,6 +330,32 @@ const App: React.FC = () => {
     setIsMinimized(!isMinimized);
   };
 
+  const handleToggleFullscreen = async () => {
+    try {
+      if (!document.fullscreenElement) {
+        await document.documentElement.requestFullscreen();
+        setIsFullscreen(true);
+      } else {
+        await document.exitFullscreen();
+        setIsFullscreen(false);
+      }
+    } catch (error) {
+      console.error('Error toggling fullscreen:', error);
+    }
+  };
+
+  // Listen for fullscreen changes
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    };
+  }, []);
+
   const handlePresetSelect = (value: string) => {
     setDomains(value);
   };
@@ -277,13 +365,13 @@ const App: React.FC = () => {
       <BackgroundEffects />
 
       <div className={`relative z-10 transition-all duration-500 ease-in-out ${
-        isMinimized 
-          ? 'p-4 max-w-fit mx-0' 
+        isMinimized
+          ? 'p-4 max-w-fit mx-0'
           : 'p-4'
       }`}>
         <div className={`transition-all duration-500 ease-in-out ${
-          isMinimized 
-            ? 'max-w-fit' 
+          isMinimized
+            ? 'max-w-fit'
             : 'max-w-7xl mx-auto'
         }`}>
           <HeaderBar
@@ -291,6 +379,8 @@ const App: React.FC = () => {
             providers={allProviders}
             showProviderMenu={showProviderMenu}
             isResolving={isResolving}
+            providerConnected={isConnected}
+            isFullscreen={isFullscreen}
             onProviderSelect={handleProviderSelect}
             onToggleProviderMenu={toggleProviderMenu}
             onCloseProviderMenu={closeProviderMenu}
@@ -299,6 +389,7 @@ const App: React.FC = () => {
             onMinimize={handleMinimize}
             onClose={handleClose}
             onShowSettings={() => setShowSettings(true)}
+            onToggleFullscreen={handleToggleFullscreen}
           />
 
           <div className={`grid lg:grid-cols-3 gap-0 border-l border-r border-gray-700 transition-all duration-500 ease-in-out overflow-hidden ${
@@ -306,7 +397,7 @@ const App: React.FC = () => {
           }`}>
             <InputPanel
               domains={domains}
-              isResolving={isResolving}
+              isResolving={isFullyResolving}
               validationErrors={validationErrors}
               presets={presets}
               onDomainsChange={setDomains}
@@ -327,6 +418,7 @@ const App: React.FC = () => {
             }`}
             results={results}
             selectedProvider={selectedProvider}
+            generationTimestamp={generationTimestamp}
             includeLocalhost={includeLocalhost}
             removeComments={removeComments}
             onIncludeLocalhostChange={setIncludeLocalhost}
@@ -335,7 +427,7 @@ const App: React.FC = () => {
           />
         </div>
       </div>
-      
+
       <HistorySidebar
         isOpen={showHistory}
         onClose={() => setShowHistory(false)}
@@ -344,7 +436,7 @@ const App: React.FC = () => {
           setShowHistory(false);
         }}
       />
-      
+
       <SettingsModal
         isOpen={showSettings}
         onClose={() => setShowSettings(false)}
