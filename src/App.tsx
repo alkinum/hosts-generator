@@ -75,7 +75,7 @@ function App() {
       t('misc.ready'),
       ''
     ]);
-  }, [selectedProvider, resetTerminal]);
+  }, [selectedProvider, resetTerminal, t]);
 
   const saveToHistory = async () => {
     if (results.length === 0) return;
