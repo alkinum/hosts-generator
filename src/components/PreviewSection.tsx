@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import { Copy, CheckCircle, Download } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { DNSResult, DOHProvider } from '../types';
-import { t, Language } from '../utils/i18n';
 
 interface PreviewSectionProps {
   className?: string;
   results: DNSResult[];
   selectedProvider: DOHProvider;
-  language: Language;
   includeLocalhost: boolean;
   removeComments: boolean;
   onIncludeLocalhostChange: (include: boolean) => void;
@@ -19,13 +18,13 @@ export const PreviewSection: React.FC<PreviewSectionProps> = ({
   className = '',
   results,
   selectedProvider,
-  language,
   includeLocalhost,
   removeComments,
   onIncludeLocalhostChange,
   onRemoveCommentsChange,
   onDownload
 }) => {
+  const { t } = useTranslation();
   const [copySuccess, setCopySuccess] = useState(false);
 
   const generateHostsFile = () => {
@@ -33,21 +32,21 @@ export const PreviewSection: React.FC<PreviewSectionProps> = ({
     
     if (!removeComments) {
       const header = includeLocalhost ? [
-        `# ${t('hostsFileGenerated', language)}`,
-        `# ${t('generatedOn', language)}: ${new Date().toISOString()}`,
-        `# ${t('resolvedUsing', language, { provider: selectedProvider.label })}`,
+        `# ${t('generated.hostsFileGenerated')}`,
+        `# ${t('generated.generatedOn')}: ${new Date().toISOString()}`,
+        `# ${t('generated.resolvedUsing', { provider: selectedProvider.label })}`,
         '',
-        `# ${t('defaultLocalhostEntries', language)}`,
+        `# ${t('generated.defaultLocalhostEntries')}`,
         '127.0.0.1 localhost',
         '::1 localhost',
         '',
-        `# ${t('customEntries', language)}`
+        `# ${t('generated.customEntries')}`
       ] : [
-        `# ${t('hostsFileGenerated', language)}`,
-        `# ${t('generatedOn', language)}: ${new Date().toISOString()}`,
-        `# ${t('resolvedUsing', language, { provider: selectedProvider.label })}`,
+        `# ${t('generated.hostsFileGenerated')}`,
+        `# ${t('generated.generatedOn')}: ${new Date().toISOString()}`,
+        `# ${t('generated.resolvedUsing', { provider: selectedProvider.label })}`,
         '',
-        `# ${t('customEntries', language)}`
+        `# ${t('generated.customEntries')}`
       ];
       content = [...header];
     } else if (includeLocalhost) {
@@ -84,22 +83,22 @@ export const PreviewSection: React.FC<PreviewSectionProps> = ({
       <div className="mb-3 flex items-start justify-between">
         <div className="flex-1">
           <div className="flex items-center gap-4 mb-1">
-            <div className="text-green-500 text-sm select-none">{t('preview', language)}</div>
+            <div className="text-green-500 text-sm select-none">{t('preview.title')}</div>
             {hasResults && (
               <div className="flex items-center gap-4 text-xs">
                 <span className="text-gray-400 select-none">
-                  {t('success', language)}: <span className="text-green-400">{successCount}</span>
+                  {t('preview.success')}: <span className="text-green-400">{successCount}</span>
                 </span>
                 <span className="text-gray-400 select-none">
-                  {t('failed', language)}: <span className="text-red-400">{errorCount}</span>
+                  {t('preview.failed')}: <span className="text-red-400">{errorCount}</span>
                 </span>
                 <span className="text-gray-400 select-none">
-                  {t('total', language)}: <span className="text-blue-400">{results.length}</span>
+                  {t('preview.total')}: <span className="text-blue-400">{results.length}</span>
                 </span>
               </div>
             )}
           </div>
-          <div className="text-gray-400 text-xs select-none">{t('previewDescription', language)}</div>
+          <div className="text-gray-400 text-xs select-none">{t('preview.description')}</div>
         </div>
       </div>
       
@@ -129,7 +128,7 @@ export const PreviewSection: React.FC<PreviewSectionProps> = ({
                     )}
                   </div>
                 </div>
-                <span className="group-hover:text-green-400 transition-colors">{t('includeLocalhost', language)}</span>
+                <span className="group-hover:text-green-400 transition-colors">{t('preview.includeLocalhost')}</span>
               </label>
               
               {/* Remove comments checkbox */}
@@ -153,7 +152,7 @@ export const PreviewSection: React.FC<PreviewSectionProps> = ({
                     )}
                   </div>
                 </div>
-                <span className="group-hover:text-green-400 transition-colors">{t('removeComments', language)}</span>
+                <span className="group-hover:text-green-400 transition-colors">{t('preview.removeComments')}</span>
               </label>
             </div>
           
@@ -165,14 +164,14 @@ export const PreviewSection: React.FC<PreviewSectionProps> = ({
                 {copySuccess ? (
                   <>
                     <CheckCircle className="w-3 h-3 text-green-400" />
-                    {t('copied', language)}
+                    {t('preview.copied')}
                   </>
                 ) : (
                   <>
                     <Copy className="w-3 h-3" />
-                    {t('copy', language)}
+                    {t('preview.copy')}
                   </>
-                )}
+                {t('preview.download')}
               </button>
               
               {successCount > 0 && (
@@ -191,7 +190,7 @@ export const PreviewSection: React.FC<PreviewSectionProps> = ({
       
       <pre className="bg-black border border-gray-800 rounded p-3 text-xs overflow-x-auto max-h-40 overflow-y-auto min-h-28">
         <code className="text-gray-300 leading-relaxed select-text">
-          {hasResults ? generateHostsFile() : `# ${t('noHostsEntries', language)}`}
+          {hasResults ? generateHostsFile() : `# ${t('generated.noHostsEntries')}`}
         </code>
       </pre>
     </div>

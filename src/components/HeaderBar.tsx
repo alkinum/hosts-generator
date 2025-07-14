@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { Settings, Clock, User } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { DOHProvider } from '../types';
-import { t, Language } from '../utils/i18n';
 
 interface HeaderBarProps {
   selectedProvider: DOHProvider;
@@ -16,7 +16,6 @@ interface HeaderBarProps {
   onToggleFullscreen: () => void;
   onClose: () => void;
   onShowSettings: () => void;
-  language: Language;
 }
 
 export const HeaderBar: React.FC<HeaderBarProps> = ({
@@ -32,8 +31,8 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
   onToggleFullscreen,
   onClose,
   onShowSettings,
-  language
 }) => {
+  const { t } = useTranslation();
   const providerMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -122,17 +121,17 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
             onClick={onShowHistory}
             className="flex items-center gap-2 text-xs text-gray-400 hover:text-green-400 transition-colors select-none"
             disabled={isResolving}
-            title={t('history', language)}
+            title={t('header.history')}
           >
             <Clock className="w-3 h-3" />
-            <span>{t('history', language)}</span>
+            <span>{t('header.history')}</span>
           </button>
           
           {/* Settings Button */}
           <button
             onClick={onShowSettings}
             className="flex items-center gap-2 text-xs text-gray-400 hover:text-green-400 transition-colors select-none"
-            title={t('settings', language)}
+            title={t('header.settings')}
           >
             <User className="w-3 h-3" />
           </button>

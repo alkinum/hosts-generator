@@ -1,21 +1,20 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Clock, Trash2, Download, Copy, CheckCircle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { historyDB, HistoryRecord } from '../utils/indexedDB';
-import { t, Language } from '../utils/i18n';
 
 interface HistorySidebarProps {
   isOpen: boolean;
   onClose: () => void;
   onLoadRecord: (inputContent: string) => void;
-  language: Language;
 }
 
 export const HistorySidebar: React.FC<HistorySidebarProps> = ({
   isOpen,
   onClose,
   onLoadRecord,
-  language
 }) => {
+  const { t } = useTranslation();
   const [records, setRecords] = useState<HistoryRecord[]>([]);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
@@ -70,7 +69,7 @@ export const HistorySidebar: React.FC<HistorySidebarProps> = ({
   };
 
   const clearAllRecords = async () => {
-    if (!confirm(t('confirmClearHistory', language))) return;
+    if (!confirm(t('history.confirmClearHistory'))) return;
     
     try {
       await historyDB.clearAllRecords();
@@ -93,12 +92,12 @@ export const HistorySidebar: React.FC<HistorySidebarProps> = ({
         minute: '2-digit' 
       });
     } else if (diffDays === 1) {
-      return t('yesterday', language) + ' ' + date.toLocaleTimeString('zh-CN', { 
+      return t('misc.yesterday') + ' ' + date.toLocaleTimeString('zh-CN', { 
         hour: '2-digit', 
         minute: '2-digit' 
       });
     } else if (diffDays < 7) {
-      return t('daysAgo', language, { days: diffDays });
+      return t('misc.daysAgo', { days: diffDays });
     } else {
       return date.toLocaleDateString('zh-CN', {
         month: '2-digit',
@@ -152,7 +151,7 @@ export const HistorySidebar: React.FC<HistorySidebarProps> = ({
         <div className="flex items-center justify-between p-4 border-b border-gray-700">
           <div className="flex items-center gap-2">
             <Clock className="w-4 h-4 text-green-400" />
-            <span className="text-green-400 font-medium select-none">{t('historyTitle', language)}</span>
+            <span className="text-green-400 font-medium select-none">{t('history.title')}</span>
           </div>
           <button
             onClick={onClose}
@@ -168,7 +167,7 @@ export const HistorySidebar: React.FC<HistorySidebarProps> = ({
             onClick={clearAllRecords}
             className="w-full bg-red-600 hover:bg-red-700 text-white py-2 px-3 rounded text-sm transition-colors select-none"
           >
-            {t('clearAllRecords', language)}
+            {t('history.clearAllRecords')}
           </button>
         </div>
 
@@ -181,7 +180,7 @@ export const HistorySidebar: React.FC<HistorySidebarProps> = ({
           {records.length === 0 && !loading ? (
             <div className="text-center text-gray-500 py-8 select-none">
               <Clock className="w-8 h-8 mx-auto mb-2 opacity-50" />
-              <p>{t('noHistoryRecords', language)}</p>
+              <p>{t('history.noHistoryRecords')}</p>
             </div>
           ) : (
             records.map((record) => (
@@ -199,7 +198,7 @@ export const HistorySidebar: React.FC<HistorySidebarProps> = ({
                       {truncateText(record.inputContent.replace(/\n/g, ' '), 50)}
                     </div>
                     <div className="text-xs text-green-400 mt-1 select-none">
-                      {t('success', language)}: {record.successCount}/{record.totalCount}
+                      {t('preview.success')}: {record.successCount}/{record.totalCount}
                     </div>
                   </div>
                   <button
@@ -216,7 +215,7 @@ export const HistorySidebar: React.FC<HistorySidebarProps> = ({
                     onClick={() => onLoadRecord(record.inputContent)}
                     className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1 px-2 rounded text-xs transition-colors select-none"
                   >
-                    {t('loadInput', language)}
+                    {t('history.loadInput')}
                   </button>
                   <button
                     onClick={() => setExpandedRecord(
@@ -224,7 +223,7 @@ export const HistorySidebar: React.FC<HistorySidebarProps> = ({
                     )}
                     className="flex-1 bg-gray-700 hover:bg-gray-600 text-gray-300 py-1 px-2 rounded text-xs transition-colors select-none"
                   >
-                    {expandedRecord === record.id ? t('collapse', language) : t('expand', language)}
+                    {expandedRecord === record.id ? t('history.collapse') : t('history.expand')}
                   </button>
                 </div>
 
@@ -233,7 +232,7 @@ export const HistorySidebar: React.FC<HistorySidebarProps> = ({
                   <div className="space-y-3 border-t border-gray-700 pt-3">
                     {/* Input Content */}
                     <div>
-                      <div className="text-xs text-gray-400 mb-1 select-none">{t('inputContent', language)}</div>
+                      <div className="text-xs text-gray-400 mb-1 select-none">{t('history.inputContent')}</div>
                       <pre className="bg-black border border-gray-800 rounded p-2 text-xs text-gray-300 overflow-x-auto max-h-20 overflow-y-auto select-text">
                         {record.inputContent}
                       </pre>
@@ -242,7 +241,7 @@ export const HistorySidebar: React.FC<HistorySidebarProps> = ({
                     {/* Output Content */}
                     <div>
                       <div className="flex items-center justify-between mb-1">
-                        <span className="text-xs text-gray-400 select-none">{t('outputContent', language)}</span>
+                        <span className="text-xs text-gray-400 select-none">{t('history.outputContent')}</span>
                         <div className="flex gap-1">
                           <button
                             onClick={() => copyToClipboard(record.outputContent, record.id)}
@@ -274,13 +273,13 @@ export const HistorySidebar: React.FC<HistorySidebarProps> = ({
 
           {loading && (
             <div className="text-center py-4 select-none">
-              <div className="text-gray-400 text-sm">{t('loading', language)}</div>
+              <div className="text-gray-400 text-sm">{t('history.loading')}</div>
             </div>
           )}
 
           {!hasMore && records.length > 0 && (
             <div className="text-center py-4 select-none">
-              <div className="text-gray-500 text-xs">{t('allRecordsLoaded', language)}</div>
+              <div className="text-gray-500 text-xs">{t('history.allRecordsLoaded')}</div>
             </div>
           )}
         </div>

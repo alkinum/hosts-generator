@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { t, Language } from '../utils/i18n';
+import { useTranslation } from 'react-i18next';
 
 interface TerminalOutputProps {
   terminalOutput: string[];
   currentLine: string;
-  language: Language;
 }
 
 export const TerminalOutput: React.FC<TerminalOutputProps> = ({
   terminalOutput,
   currentLine,
-  language
 }) => {
+  const { t } = useTranslation();
   const [showCursor, setShowCursor] = useState(true);
 
   useEffect(() => {
@@ -24,8 +23,8 @@ export const TerminalOutput: React.FC<TerminalOutputProps> = ({
   return (
     <div className="lg:col-span-2 bg-black p-4 border-r border-gray-700">
       <div className="mb-3">
-        <div className="text-green-500 text-sm mb-1 select-none">{t('output', language)}</div>
-        <div className="text-gray-400 text-xs mb-3 select-none">{t('outputDescription', language)}</div>
+        <div className="text-green-500 text-sm mb-1 select-none">{t('terminal.title')}</div>
+        <div className="text-gray-400 text-xs mb-3 select-none">{t('terminal.description')}</div>
       </div>
       
       <div className="h-80 overflow-y-auto bg-gray-950 border border-gray-800 rounded p-3 text-sm">

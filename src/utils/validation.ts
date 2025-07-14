@@ -1,13 +1,14 @@
+import { useTranslation } from 'react-i18next';
 import { ValidationResult } from '../types';
-import { t, Language } from './i18n';
 
-export const validateDomains = (input: string, language: Language): ValidationResult => {
+export const validateDomains = (input: string): ValidationResult => {
+  const { t } = useTranslation();
   const errors: string[] = [];
   const validDomains: string[] = [];
   const lines = input.split('\n').map(line => line.trim()).filter(line => line && !line.startsWith('#'));
   
   if (lines.length === 0) {
-    errors.push(t('noValidDomains', language));
+    errors.push(t('validation.noValidDomains'));
     return { domains: [], errors };
   }
 
@@ -26,17 +27,17 @@ export const validateDomains = (input: string, language: Language): ValidationRe
       // Just a domain
       domain = parts[0];
     } else {
-      errors.push(`Line ${index + 1}: ${t('invalidFormat', language)} "${line}"`);
+      errors.push(`Line ${index + 1}: ${t('validation.invalidFormat')} "${line}"`);
       return;
     }
     
     if (!domainRegex.test(domain)) {
-      errors.push(`Line ${index + 1}: ${t('invalidDomainFormat', language)} "${domain}"`);
+      errors.push(`Line ${index + 1}: ${t('validation.invalidDomainFormat')} "${domain}"`);
       return;
     }
     
     if (domain.length > 253) {
-      errors.push(`Line ${index + 1}: ${t('domainTooLong', language)} "${domain}"`);
+      errors.push(`Line ${index + 1}: ${t('validation.domainTooLong')} "${domain}"`);
       return;
     }
 

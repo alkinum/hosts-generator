@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { X, Settings as SettingsIcon, AlertCircle, CheckCircle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { UserSettings } from '../types';
-import { t, Language } from '../utils/i18n';
 
 interface SettingsModalProps {
   isOpen: boolean;
   onClose: () => void;
   settings: UserSettings;
   onSave: (settings: UserSettings) => void;
-  language: Language;
 }
 
 export const SettingsModal: React.FC<SettingsModalProps> = ({
@@ -16,8 +15,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   onClose,
   settings,
   onSave,
-  language
 }) => {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState<UserSettings>(settings);
   const [status, setStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
@@ -69,7 +68,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             <div className="flex items-center gap-2">
               <SettingsIcon className="w-4 h-4 text-green-400" />
               <span className="text-green-400 font-medium select-none">
-                {t('settingsTitle', language)}
+                {t('settings.title')}
               </span>
             </div>
             <button
@@ -85,13 +84,13 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             {/* Preset Source URL */}
             <div>
               <label className="block text-sm text-gray-400 mb-2 select-none">
-                {t('presetSourceUrl', language)}
+                {t('settings.presetSourceUrl')}
               </label>
               <input
                 type="url"
                 value={formData.presetSourceUrl}
                 onChange={(e) => setFormData({ ...formData, presetSourceUrl: e.target.value })}
-                placeholder={t('presetSourcePlaceholder', language)}
+                placeholder={t('settings.presetSourcePlaceholder')}
                 className="w-full bg-black border border-gray-600 rounded p-3 text-green-400 text-sm placeholder-gray-600 focus:border-green-500 focus:outline-none select-text"
                 disabled={status === 'saving'}
               />
@@ -108,7 +107,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             {status === 'success' && (
               <div className="flex items-center gap-2 text-green-400 text-sm">
                 <CheckCircle className="w-4 h-4 flex-shrink-0" />
-                <span className="select-none">{t('fetchPresetsSuccess', language)}</span>
+                <span className="select-none">{t('settings.fetchPresetsSuccess')}</span>
               </div>
             )}
           </div>
@@ -120,14 +119,14 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               disabled={status === 'saving'}
               className="flex-1 bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 text-gray-300 py-2 px-4 rounded text-sm transition-colors select-none"
             >
-              {t('cancel', language)}
+              {t('settings.cancel')}
             </button>
             <button
               onClick={handleSave}
               disabled={status === 'saving'}
               className="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-black font-medium py-2 px-4 rounded text-sm transition-colors select-none"
             >
-              {status === 'saving' ? t('fetchingPresets', language) : t('save', language)}
+              {status === 'saving' ? t('settings.fetchingPresets') : t('settings.save')}
             </button>
           </div>
         </div>

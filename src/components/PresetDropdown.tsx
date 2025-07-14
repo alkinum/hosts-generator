@@ -1,21 +1,20 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown, List } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { PresetItem } from '../types';
-import { t, Language } from '../utils/i18n';
 
 interface PresetDropdownProps {
   presets: PresetItem[];
   onSelect: (value: string) => void;
-  language: Language;
   disabled?: boolean;
 }
 
 export const PresetDropdown: React.FC<PresetDropdownProps> = ({
   presets,
   onSelect,
-  language,
   disabled = false
 }) => {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -63,7 +62,7 @@ export const PresetDropdown: React.FC<PresetDropdownProps> = ({
         className="flex items-center gap-2 bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 text-gray-300 py-2 px-3 rounded text-sm transition-colors select-none"
       >
         <List className="w-3 h-3" />
-        <span>{t('presets', language)}</span>
+        <span>{t('input.presets')}</span>
         <ChevronDown className={`w-3 h-3 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
