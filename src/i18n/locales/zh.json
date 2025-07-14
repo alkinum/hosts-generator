@@ -1,6 +1,6 @@
 {
   "header": {
-    "appTitle": "hosts生成器",
+    "appTitle": "hosts 生成器",
     "history": "历史记录",
     "settings": "设置",
     "close": "关闭",
@@ -9,8 +9,8 @@
   },
   "input": {
     "title": "输入",
-    "description": "输入域名或hosts条目",
-    "placeholder": "example.com\ngoogle.com\ngithub.com\n\n# 或粘贴hosts条目:\n127.0.0.1 localhost",
+    "description": "输入域名或 hosts 条目",
+    "placeholder": "example.com\ngoogle.com\ngithub.com\n\n# 或粘贴 hosts 条目:\n127.0.0.1 localhost",
     "resolving": "解析中...",
     "resolveDomains": "解析域名",
     "clear": "清空",
@@ -22,11 +22,11 @@
   },
   "preview": {
     "title": "预览",
-    "description": "生成的hosts文件内容",
+    "description": "生成的 hosts 文件内容",
     "success": "成功",
     "failed": "失败",
     "total": "总计",
-    "includeLocalhost": "包含localhost条目",
+    "includeLocalhost": "包含 localhost 条目",
     "removeComments": "移除注释",
     "copy": "复制",
     "copied": "已复制!",
@@ -34,16 +34,16 @@
   },
   "settings": {
     "title": "设置",
-    "presetSourceUrl": "预设源URL",
-    "presetSourceDescription": "从外部源获取预设配置的URL",
-    "presetSourcePlaceholder": "输入获取预设配置的URL...",
-    "customDnsProviders": "自定义DNS提供商",
-    "customDnsProvidersDescription": "添加您自己的DNS-over-HTTPS提供商用于域名解析",
+    "presetSourceUrl": "预设源 URL",
+    "presetSourceDescription": "从外部源获取预设配置的 URL",
+    "presetSourcePlaceholder": "输入获取预设配置的 URL...",
+    "customDnsProviders": "自定义 DNS 提供商",
+    "customDnsProvidersDescription": "添加您自己的 DNS-over-HTTPS 提供商用于域名解析",
     "addProvider": "添加提供商",
     "addNewProvider": "添加新提供商",
     "removeProvider": "移除提供商",
-    "noCustomProviders": "未配置自定义DNS提供商",
-    "addCustomProviderHint": "点击「添加提供商」来添加您自己的DNS-over-HTTPS提供商",
+    "noCustomProviders": "未配置自定义 DNS 提供商",
+    "addCustomProviderHint": "点击「添加提供商」来添加您自己的 DNS-over-HTTPS 提供商",
     "providerName": "提供商名称",
     "providerNamePlaceholder": "例如：cloudflare",
     "displayLabel": "显示标签",
@@ -51,7 +51,7 @@
     "dnsOverHttpsUrl": "DNS-over-HTTPS URL",
     "dnsOverHttpsUrlPlaceholder": "https://cloudflare-dns.com/dns-query",
     "allFieldsRequired": "所有字段都是必填的",
-    "invalidDnsProvider": "无效的DNS提供商",
+    "invalidDnsProvider": "无效的 DNS 提供商",
     "providerValidated": "提供商验证成功",
     "validating": "验证中...",
     "save": "保存",
@@ -82,26 +82,26 @@
     "validationFailed": "验证失败。请修复错误后重试。"
   },
   "dns": {
-    "initializingResolver": "初始化DNS解析器...",
+    "initializingResolver": "初始化 DNS 解析器...",
     "foundDomains": "找到 {{count}} 个域名待解析",
     "usingProvider": "使用 {{provider}} DNS over HTTPS",
     "maxConcurrentRequests": "最大并发请求数: 5",
-    "resolutionCompleted": "DNS解析完成。",
+    "resolutionCompleted": "DNS 解析完成。",
     "successfullyResolved": "成功解析 {{success}}/{{total}} 个域名",
     "resolutionFailed": "解析过程失败"
   },
   "generated": {
-    "hostsFileGenerated": "由hosts生成器生成的Hosts文件",
+    "hostsFileGenerated": "由 hosts 生成器生成的 Hosts 文件",
     "generatedOn": "生成时间",
     "resolvedUsing": "使用 {{provider}} DNS over HTTPS 解析",
-    "defaultLocalhostEntries": "默认localhost条目",
+    "defaultLocalhostEntries": "默认 localhost 条目",
     "customEntries": "自定义条目",
-    "noHostsEntries": "尚未生成hosts条目\n解析一些域名以查看输出"
+    "noHostsEntries": "尚未生成 hosts 条目\n解析一些域名以查看输出"
   },
   "misc": {
     "ready": "准备处理域名...",
     "yesterday": "昨天",
-    "daysAgo": "{{days}}天前",
+    "daysAgo": "{{days}} 天前",
     "closeConfirm": "确定要关闭应用程序吗？"
   }
 }

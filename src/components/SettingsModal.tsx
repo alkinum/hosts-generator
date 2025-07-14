@@ -94,6 +94,12 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     });
   };
 
+  const handleBackdropClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      handleCancel();
+    }
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -101,11 +107,13 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
       {/* Backdrop */}
       <div 
         className="fixed inset-0 bg-black bg-opacity-50 z-50 transition-opacity"
-        onClick={handleCancel}
       />
       
       {/* Modal */}
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div 
+        className="fixed inset-0 z-50 flex items-center justify-center p-4"
+        onClick={handleBackdropClick}
+      >
         <div className="bg-gray-900 border border-gray-700 rounded-lg w-full max-w-md">
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-gray-700">
@@ -158,11 +166,11 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 </div>
                 <button
                   onClick={() => setIsAddingProvider(true)}
-                  className="text-green-400 hover:text-green-300 text-sm flex items-center gap-1 px-2 py-1 rounded hover:bg-gray-700/50 transition-colors"
+                  className="text-green-400 hover:text-green-300 text-sm flex items-center gap-1 px-3 py-2 rounded hover:bg-gray-700/50 transition-colors whitespace-nowrap"
                   disabled={status === 'saving' || isAddingProvider}
                 >
-                  <Plus className="w-4 h-4" />
-                  {t('settings.addProvider')}
+                  <Plus className="w-4 h-4 flex-shrink-0" />
+                  <span className="truncate">{t('settings.addProvider')}</span>
                 </button>
               </div>
 
@@ -256,16 +264,16 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                           setValidationStatus('idle');
                           setValidationError('');
                         }}
-                        className="flex-1 bg-gray-700 hover:bg-gray-600 text-gray-300 py-2 px-3 rounded text-sm transition-colors"
+                        className="flex-1 min-w-0 bg-gray-700 hover:bg-gray-600 text-gray-300 py-2 px-3 rounded text-sm transition-colors"
                       >
-                        {t('settings.cancel')}
+                        <span className="truncate block">{t('settings.cancel')}</span>
                       </button>
                       <button
                         onClick={handleAddProvider}
                         disabled={validationStatus === 'validating'}
-                        className="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 text-black font-medium py-2 px-3 rounded text-sm transition-colors"
+                        className="flex-1 min-w-0 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 text-black font-medium py-2 px-3 rounded text-sm transition-colors"
                       >
-                        {validationStatus === 'validating' ? t('settings.validating') : t('settings.addProvider')}
+                        <span className="truncate block">{validationStatus === 'validating' ? t('settings.validating') : t('settings.addProvider')}</span>
                       </button>
                     </div>
                   </div>
@@ -294,16 +302,16 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             <button
               onClick={handleCancel}
               disabled={status === 'saving'}
-              className="flex-1 bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 text-gray-300 py-2 px-4 rounded text-sm transition-colors select-none"
+              className="flex-1 min-w-0 bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 text-gray-300 py-2 px-4 rounded text-sm transition-colors select-none"
             >
-              {t('settings.cancel')}
+              <span className="truncate block">{t('settings.cancel')}</span>
             </button>
             <button
               onClick={handleSave}
               disabled={status === 'saving'}
-              className="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-black font-medium py-2 px-4 rounded text-sm transition-colors select-none"
+              className="flex-1 min-w-0 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-black font-medium py-2 px-4 rounded text-sm transition-colors select-none"
             >
-              {status === 'saving' ? t('settings.fetchingPresets') : t('settings.save')}
+              <span className="truncate block">{status === 'saving' ? t('settings.fetchingPresets') : t('settings.save')}</span>
             </button>
           </div>
         </div>
