@@ -22,6 +22,8 @@ function App() {
   const [removeComments, setRemoveComments] = useState(false);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [showHistory, setShowHistory] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const {
     terminalOutput,
@@ -208,8 +210,49 @@ function App() {
     }
   };
 
+  // Window control handlers
+  const handleClose = () => {
+    if (window.confirm('Are you sure you want to close the application?')) {
+      window.close();
+    }
+  };
+
+  const handleMinimize = () => {
+    setIsMinimized(!isMinimized);
+  };
+
+  const handleToggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().then(() => {
+        setIsFullscreen(true);
+      }).catch((err) => {
+        console.error('Error attempting to enable fullscreen:', err);
+      });
+    } else {
+      document.exitFullscreen().then(() => {
+        setIsFullscreen(false);
+      }).catch((err) => {
+        console.error('Error attempting to exit fullscreen:', err);
+      });
+    }
+  };
+
+  // Listen for fullscreen changes
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    };
+  }, []);
+
   return (
-    <div className="min-h-screen bg-black text-green-400 font-mono relative overflow-hidden select-none">
+    <div className={`min-h-screen bg-black text-green-400 font-mono relative overflow-hidden select-none transition-all duration-300 ${
+      isMinimized ? 'transform scale-95 opacity-50' : ''
+    }`}>
       <BackgroundEffects />
 
       <div className="relative z-10 p-4">
@@ -222,9 +265,15 @@ function App() {
             onProviderSelect={handleProviderSelect}
             onToggleProviderMenu={toggleProviderMenu}
             onShowHistory={() => setShowHistory(true)}
+            isMinimized={isMinimized}
+            onMinimize={handleMinimize}
+            onToggleFullscreen={handleToggleFullscreen}
+            onClose={handleClose}
           />
 
-          <div className="grid lg:grid-cols-3 gap-0 border-l border-r border-gray-700">
+          <div className={`grid lg:grid-cols-3 gap-0 border-l border-r border-gray-700 transition-all duration-300 ${
+            isMinimized ? 'opacity-30 pointer-events-none' : ''
+          }`}>
             <InputPanel
               domains={domains}
               isResolving={isResolving}
@@ -243,6 +292,9 @@ function App() {
           </div>
 
           <PreviewSection
+            className={`transition-all duration-300 ${
+              isMinimized ? 'opacity-30 pointer-events-none' : ''
+            }`}
             results={results}
             selectedProvider={selectedProvider}
             includeLocalhost={includeLocalhost}

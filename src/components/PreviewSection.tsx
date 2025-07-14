@@ -3,6 +3,7 @@ import { Copy, CheckCircle, Download } from 'lucide-react';
 import { DNSResult, DOHProvider } from '../types';
 
 interface PreviewSectionProps {
+  className?: string;
   results: DNSResult[];
   selectedProvider: DOHProvider;
   includeLocalhost: boolean;
@@ -13,6 +14,7 @@ interface PreviewSectionProps {
 }
 
 export const PreviewSection: React.FC<PreviewSectionProps> = ({
+  className = '',
   results,
   selectedProvider,
   includeLocalhost,
@@ -74,7 +76,7 @@ export const PreviewSection: React.FC<PreviewSectionProps> = ({
   const errorCount = results.filter(r => !r.ip).length;
 
   return (
-    <div className="bg-gray-900 border-l border-r border-b border-gray-700 rounded-b-lg p-4">
+    <div className={`bg-gray-900 border-l border-r border-b border-gray-700 rounded-b-lg p-4 ${className}`}>
       {/* Header with title and statistics */}
       <div className="mb-3 flex items-start justify-between">
         <div className="flex-1">

@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import { Settings, Clock } from 'lucide-react';
+import { Settings, Clock, Minus, Square, X } from 'lucide-react';
 import { DOHProvider } from '../types';
 
 interface HeaderBarProps {
@@ -10,6 +10,10 @@ interface HeaderBarProps {
   onProviderSelect: (provider: DOHProvider) => void;
   onToggleProviderMenu: () => void;
   onShowHistory: () => void;
+  isMinimized: boolean;
+  onMinimize: () => void;
+  onToggleFullscreen: () => void;
+  onClose: () => void;
 }
 
 export const HeaderBar: React.FC<HeaderBarProps> = ({
@@ -19,7 +23,11 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
   isResolving,
   onProviderSelect,
   onToggleProviderMenu,
-  onShowHistory
+  onShowHistory,
+  isMinimized,
+  onMinimize,
+  onToggleFullscreen,
+  onClose
 }) => {
   const providerMenuRef = useRef<HTMLDivElement>(null);
 
@@ -42,10 +50,33 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
   return (
     <div className="bg-gray-900 border border-gray-700 rounded-t-lg px-4 py-3 flex items-center justify-between">
       <div className="flex items-center gap-3">
-        <div className="flex gap-2">
-          <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-          <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-          <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+        <div className="flex gap-2 select-none">
+          {/* Close Button */}
+          <button
+            onClick={onClose}
+            className="w-3 h-3 bg-red-500 rounded-full hover:bg-red-600 transition-colors flex items-center justify-center group"
+            title="Close"
+          >
+            <X className="w-2 h-2 text-red-900 opacity-0 group-hover:opacity-100 transition-opacity" />
+          </button>
+          
+          {/* Minimize Button */}
+          <button
+            onClick={onMinimize}
+            className="w-3 h-3 bg-yellow-500 rounded-full hover:bg-yellow-600 transition-colors flex items-center justify-center group"
+            title="Minimize"
+          >
+            <Minus className="w-2 h-2 text-yellow-900 opacity-0 group-hover:opacity-100 transition-opacity" />
+          </button>
+          
+          {/* Fullscreen Toggle Button */}
+          <button
+            onClick={onToggleFullscreen}
+            className="w-3 h-3 bg-green-500 rounded-full hover:bg-green-600 transition-colors flex items-center justify-center group"
+            title="Toggle Fullscreen"
+          >
+            <Square className="w-2 h-2 text-green-900 opacity-0 group-hover:opacity-100 transition-opacity" />
+          </button>
         </div>
         <span className="text-gray-400 text-sm select-none">hosts-generator</span>
       </div>
