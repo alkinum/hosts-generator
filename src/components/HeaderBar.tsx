@@ -139,11 +139,12 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
           <div className="relative" ref={providerMenuRef}>
             <button
               onClick={onToggleProviderMenu}
-              className="flex items-center gap-2 text-gray-400 hover:text-green-400 transition-colors select-none p-1"
+              className="flex items-center gap-2 text-gray-400 hover:text-green-400 transition-colors select-none"
               title={selectedProvider.label}
               disabled={isResolving}
             >
               <Wifi className="w-4 h-4" />
+              <span className="text-xs">{selectedProvider.label}</span>
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
             </button>
             
