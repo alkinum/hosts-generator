@@ -1,12 +1,13 @@
 import { ValidationResult } from '../types';
+import { t, Language } from './i18n';
 
-export const validateDomains = (input: string): ValidationResult => {
+export const validateDomains = (input: string, language: Language): ValidationResult => {
   const errors: string[] = [];
   const validDomains: string[] = [];
   const lines = input.split('\n').map(line => line.trim()).filter(line => line && !line.startsWith('#'));
   
   if (lines.length === 0) {
-    errors.push('No valid domains found');
+    errors.push(t('noValidDomains', language));
     return { domains: [], errors };
   }
 
@@ -25,17 +26,17 @@ export const validateDomains = (input: string): ValidationResult => {
       // Just a domain
       domain = parts[0];
     } else {
-      errors.push(`Line ${index + 1}: Invalid format "${line}"`);
+      errors.push(`Line ${index + 1}: ${t('invalidFormat', language)} "${line}"`);
       return;
     }
     
     if (!domainRegex.test(domain)) {
-      errors.push(`Line ${index + 1}: Invalid domain format "${domain}"`);
+      errors.push(`Line ${index + 1}: ${t('invalidDomainFormat', language)} "${domain}"`);
       return;
     }
     
     if (domain.length > 253) {
-      errors.push(`Line ${index + 1}: Domain too long "${domain}"`);
+      errors.push(`Line ${index + 1}: ${t('domainTooLong', language)} "${domain}"`);
       return;
     }
 

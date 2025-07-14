@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from 'react';
-import { Settings, Clock } from 'lucide-react';
+import { Settings, Clock, User } from 'lucide-react';
 import { DOHProvider } from '../types';
+import { t, Language } from '../utils/i18n';
 
 interface HeaderBarProps {
   selectedProvider: DOHProvider;
@@ -14,6 +15,8 @@ interface HeaderBarProps {
   onMinimize: () => void;
   onToggleFullscreen: () => void;
   onClose: () => void;
+  onShowSettings: () => void;
+  language: Language;
 }
 
 export const HeaderBar: React.FC<HeaderBarProps> = ({
@@ -27,7 +30,9 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
   isMinimized,
   onMinimize,
   onToggleFullscreen,
-  onClose
+  onClose,
+  onShowSettings,
+  language
 }) => {
   const providerMenuRef = useRef<HTMLDivElement>(null);
 
@@ -106,7 +111,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
           </button>
         </div>
         {!isMinimized && (
-          <span className="text-gray-400 text-sm select-none">hosts-generator</span>
+          <span className="text-gray-400 text-sm select-none">{t('appTitle', language)}</span>
         )}
       </div>
       
@@ -117,9 +122,19 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
             onClick={onShowHistory}
             className="flex items-center gap-2 text-xs text-gray-400 hover:text-green-400 transition-colors select-none"
             disabled={isResolving}
+            title={t('history', language)}
           >
             <Clock className="w-3 h-3" />
-            <span>历史</span>
+            <span>{t('history', language)}</span>
+          </button>
+          
+          {/* Settings Button */}
+          <button
+            onClick={onShowSettings}
+            className="flex items-center gap-2 text-xs text-gray-400 hover:text-green-400 transition-colors select-none"
+            title={t('settings', language)}
+          >
+            <User className="w-3 h-3" />
           </button>
           
           {/* DNS Provider Selector */}
@@ -127,6 +142,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
             <button
               onClick={onToggleProviderMenu}
               className="flex items-center gap-2 text-xs text-gray-400 hover:text-green-400 transition-colors select-none"
+              title={selectedProvider.label}
               disabled={isResolving}
             >
               <Settings className="w-3 h-3" />

@@ -5,12 +5,16 @@ import { InputPanel } from './components/InputPanel';
 import { TerminalOutput } from './components/TerminalOutput';
 import { PreviewSection } from './components/PreviewSection';
 import { HistorySidebar } from './components/HistorySidebar';
+import { SettingsModal } from './components/SettingsModal';
 import { useTerminal } from './hooks/useTerminal';
 import { useDNSResolver } from './hooks/useDNSResolver';
 import { validateDomains } from './utils/validation';
 import { historyDB } from './utils/indexedDB';
+import { loadSettings, saveSettings } from './utils/settings';
+import { fetchPresets } from './utils/presets';
 import { DOH_PROVIDERS } from './utils/constants';
-import { DNSResult, DOHProvider } from './types';
+import { DNSResult, DOHProvider, PresetItem, UserSettings } from './types';
+import { getSystemLanguage, t, Language } from './utils/i18n';
 import packageJson from '../package.json';
 
 function App() {
@@ -22,8 +26,12 @@ function App() {
   const [removeComments, setRemoveComments] = useState(false);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [showHistory, setShowHistory] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [settings, setSettings] = useState<UserSettings>(loadSettings());
+  const [presets, setPresets] = useState<PresetItem[]>([]);
+  const [language] = useState<Language>(getSystemLanguage());
 
   const {
     terminalOutput,
@@ -33,9 +41,9 @@ function App() {
     resetTerminal
   } = useTerminal([
     `hosts-generator v${packageJson.version}`,
-    `DNS resolution via ${selectedProvider.label}`,
+    `${t('resolvedUsing', language, { provider: selectedProvider.label })}`,
     '',
-    'Ready to process domains...',
+    t('ready', language),
     ''
   ]);
 
@@ -62,9 +70,9 @@ function App() {
   useEffect(() => {
     resetTerminal([
       `hosts-generator v${packageJson.version}`,
-      `DNS resolution via ${selectedProvider.label}`,
+      `${t('resolvedUsing', language, { provider: selectedProvider.label })}`,
       '',
-      'Ready to process domains...',
+      t('ready', language),
       ''
     ]);
   }, [selectedProvider, resetTerminal]);
@@ -86,10 +94,36 @@ function App() {
     }
   };
 
+  // Load presets when settings change or on initial load
+  useEffect(() => {
+    const loadPresets = async () => {
+      if (settings.presetSourceUrl) {
+        try {
+          const fetchedPresets = await fetchPresets(settings.presetSourceUrl);
+          setPresets(fetchedPresets);
+          addToTerminal(`✓ ${t('fetchPresetsSuccess', language)}`, 0);
+        } catch (error) {
+          console.error('Failed to fetch presets:', error);
+          addToTerminal(`✗ ${t('fetchPresetsFailed', language)}: ${error instanceof Error ? error.message : 'Unknown error'}`, 0);
+          setPresets([]);
+        }
+      } else {
+        setPresets([]);
+      }
+    };
+
+    loadPresets();
+  }, [settings.presetSourceUrl, addToTerminal, language]);
+
+  const handleSaveSettings = async (newSettings: UserSettings) => {
+    saveSettings(newSettings);
+    setSettings(newSettings);
+  };
+
   const handleResolve = async () => {
     if (!domains.trim()) return;
 
-    const { domains: validDomains, errors } = validateDomains(domains);
+    const { domains: validDomains, errors } = validateDomains(domains, language);
     setValidationErrors(errors);
     
     if (errors.length > 0) {
@@ -99,12 +133,12 @@ function App() {
         addToTerminal(`✗ ${error}`, 200 + index * 100);
       });
       addToTerminal('', 200 + errors.length * 100);
-      addToTerminal('Validation failed. Please fix errors and try again.', 300 + errors.length * 100);
+      addToTerminal(t('validationFailed', language), 300 + errors.length * 100);
       return;
     }
 
     if (validDomains.length === 0) {
-      addToTerminal('✗ No valid domains to resolve', 0);
+      addToTerminal(`✗ ${t('noValidDomains', language)}`, 0);
       return;
     }
 
@@ -112,10 +146,10 @@ function App() {
 
     addToTerminal(`$ hosts-generator --resolve --provider=${selectedProvider.name}`, 0);
     addToTerminal('', 100);
-    typeToTerminal('Initializing DNS resolver...', 200);
-    addToTerminal(`Found ${validDomains.length} domains to resolve`, 1500);
-    addToTerminal(`Using ${selectedProvider.label} DNS over HTTPS`, 1600);
-    addToTerminal(`Max concurrent requests: 5`, 1700);
+    typeToTerminal(t('initializingResolver', language), 200);
+    addToTerminal(t('foundDomains', language, { count: validDomains.length }), 1500);
+    addToTerminal(t('usingProvider', language, { provider: selectedProvider.label }), 1600);
+    addToTerminal(t('maxConcurrentRequests', language), 1700);
     addToTerminal('', 1800);
 
     try {
@@ -123,8 +157,8 @@ function App() {
       
       setTimeout(() => {
         addToTerminal('', 500);
-        addToTerminal('DNS resolution completed.', 600);
-        addToTerminal(`Successfully resolved ${resolvedResults.filter(r => r.ip).length}/${validDomains.length} domains`, 700);
+        addToTerminal(t('resolutionCompleted', language), 600);
+        addToTerminal(t('successfullyResolved', language, { success: resolvedResults.filter(r => r.ip).length, total: validDomains.length }), 700);
         setResults(resolvedResults);
         
         // Save to history after successful resolution
@@ -133,7 +167,7 @@ function App() {
         }, 1000);
       }, validDomains.length * 200 + 2000);
     } catch (error) {
-      addToTerminal('✗ Resolution process failed', 0);
+      addToTerminal(`✗ ${t('resolutionFailed', language)}`, 0);
     }
   };
 
@@ -142,21 +176,21 @@ function App() {
     
     if (!removeComments) {
       const header = includeLocalhost ? [
-        '# Hosts file generated by hosts-generator',
-        `# Generated on: ${new Date().toISOString()}`,
-        `# Resolved using ${selectedProvider.label} DNS over HTTPS`,
+        `# ${t('hostsFileGenerated', language)}`,
+        `# ${t('generatedOn', language)}: ${new Date().toISOString()}`,
+        `# ${t('resolvedUsing', language, { provider: selectedProvider.label })}`,
         '',
-        '# Default localhost entries',
+        `# ${t('defaultLocalhostEntries', language)}`,
         '127.0.0.1 localhost',
         '::1 localhost',
         '',
-        '# Custom entries'
+        `# ${t('customEntries', language)}`
       ] : [
-        '# Hosts file generated by hosts-generator',
-        `# Generated on: ${new Date().toISOString()}`,
-        `# Resolved using ${selectedProvider.label} DNS over HTTPS`,
+        `# ${t('hostsFileGenerated', language)}`,
+        `# ${t('generatedOn', language)}: ${new Date().toISOString()}`,
+        `# ${t('resolvedUsing', language, { provider: selectedProvider.label })}`,
         '',
-        '# Custom entries'
+        `# ${t('customEntries', language)}`
       ];
       content = [...header];
     } else if (includeLocalhost) {
@@ -187,10 +221,10 @@ function App() {
   const clearAll = () => {
     setDomains('');
     resetTerminal([
-      'hosts-generator v2.1.0',
-      `DNS resolution via ${selectedProvider.label}`,
+      `hosts-generator v${packageJson.version}`,
+      `${t('resolvedUsing', language, { provider: selectedProvider.label })}`,
       '',
-      'Ready to process domains...',
+      t('ready', language),
       ''
     ]);
     setResults([]);
@@ -212,7 +246,7 @@ function App() {
 
   // Window control handlers
   const handleClose = () => {
-    if (window.confirm('Are you sure you want to close the application?')) {
+    if (window.confirm(t('closeConfirm', language))) {
       window.close();
     }
   };
@@ -249,6 +283,10 @@ function App() {
     };
   }, []);
 
+  const handlePresetSelect = (value: string) => {
+    setDomains(value);
+  };
+
   return (
     <div className="min-h-screen bg-black text-green-400 font-mono relative overflow-hidden select-none">
       <BackgroundEffects />
@@ -275,6 +313,8 @@ function App() {
             onMinimize={handleMinimize}
             onToggleFullscreen={handleToggleFullscreen}
             onClose={handleClose}
+            onShowSettings={() => setShowSettings(true)}
+            language={language}
           />
 
           <div className={`grid lg:grid-cols-3 gap-0 border-l border-r border-gray-700 transition-all duration-500 ease-in-out overflow-hidden ${
@@ -285,15 +325,19 @@ function App() {
               isResolving={isResolving}
               validationErrors={validationErrors}
               results={results}
+              presets={presets}
+              language={language}
               onDomainsChange={setDomains}
               onResolve={handleResolve}
               onClear={clearAll}
               onDownload={downloadHostsFile}
+              onPresetSelect={handlePresetSelect}
             />
 
             <TerminalOutput
               terminalOutput={terminalOutput}
               currentLine={currentLine}
+              language={language}
             />
           </div>
 
@@ -303,6 +347,7 @@ function App() {
             }`}
             results={results}
             selectedProvider={selectedProvider}
+            language={language}
             includeLocalhost={includeLocalhost}
             removeComments={removeComments}
             onIncludeLocalhostChange={setIncludeLocalhost}
@@ -315,10 +360,19 @@ function App() {
       <HistorySidebar
         isOpen={showHistory}
         onClose={() => setShowHistory(false)}
+        language={language}
         onLoadRecord={(inputContent) => {
           setDomains(inputContent);
           setShowHistory(false);
         }}
+      />
+      
+      <SettingsModal
+        isOpen={showSettings}
+        onClose={() => setShowSettings(false)}
+        settings={settings}
+        onSave={handleSaveSettings}
+        language={language}
       />
     </div>
   );

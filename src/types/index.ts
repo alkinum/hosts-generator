@@ -14,3 +14,13 @@ export interface ValidationResult {
   domains: string[];
   errors: string[];
 }
+
+export interface PresetItem {
+  title: string;
+  value?: string;
+  children?: PresetItem[];
+}
+
+export interface UserSettings {
+  presetSourceUrl: string;
+}
