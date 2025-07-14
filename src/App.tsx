@@ -18,7 +18,7 @@ import { DNSResult, DOHProvider, PresetItem, UserSettings } from './types';
 import packageJson from '../package.json';
 
 const App: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [domains, setDomains] = useState('');
   const [results, setResults] = useState<DNSResult[]>([]);
   const [selectedProvider, setSelectedProvider] = useState<DOHProvider>(DOH_PROVIDERS[0]);
@@ -49,17 +49,27 @@ const App: React.FC = () => {
     historyDB.init().catch(console.error);
   }, []);
 
-  // Update terminal when provider changes
+  // Initialize terminal output once and update when provider changes
   useEffect(() => {
+    if (!i18n.isInitialized) return;
+    
     resetTerminal([]);
     
+    // Store timeout IDs for cleanup
+    const timeouts: number[] = [];
+    
     // Add animated output with delays
-    addToTerminal(`hosts-generator v${packageJson.version}`, 0);
-    addToTerminal(`${t('generated.resolvedUsing', { provider: selectedProvider.label })}`, 200);
-    addToTerminal('', 400);
-    typeToTerminal(t('misc.ready'), 600);
-    addToTerminal('', 1100);
-  }, [selectedProvider, t]);
+    timeouts.push(setTimeout(() => addToTerminal(`hosts-generator v${packageJson.version}`), 0));
+    timeouts.push(setTimeout(() => addToTerminal(`${t('generated.resolvedUsing', { provider: selectedProvider.label })}`), 200));
+    timeouts.push(setTimeout(() => addToTerminal(''), 400));
+    timeouts.push(setTimeout(() => typeToTerminal(t('misc.ready')), 600));
+    timeouts.push(setTimeout(() => addToTerminal(''), 1100));
+    
+    // Cleanup function to clear all timeouts
+    return () => {
+      timeouts.forEach(timeout => clearTimeout(timeout));
+    };
+  }, [selectedProvider, i18n.isInitialized, addToTerminal, typeToTerminal, resetTerminal, t]);
 
   const saveToHistory = async () => {
     if (results.length === 0) return;
