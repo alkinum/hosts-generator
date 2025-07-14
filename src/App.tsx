@@ -39,7 +39,7 @@ function App() {
     addToTerminal,
     typeToTerminal,
     resetTerminal
-  } = useTerminal([
+  } = useTerminal();
     `hosts-generator v${packageJson.version}`,
     `${t('generated.resolvedUsing', { provider: selectedProvider.label })}`,
     '',
@@ -61,13 +61,24 @@ function App() {
     }
   });
 
-  // Initialize IndexedDB
+  // Initialize IndexedDB and initial terminal output
   useEffect(() => {
     historyDB.init().catch(console.error);
+    
+    // Initial terminal output with animation
+    addToTerminal(`hosts-generator v${packageJson.version}`, 0);
+    addToTerminal(`${t('generated.resolvedUsing', { provider: selectedProvider.label })}`, 200);
+    addToTerminal('', 400);
+    typeToTerminal(t('misc.ready'), 600);
+    addToTerminal('', 1100);
   }, []);
 
-  // Update terminal when provider changes
+  // Update terminal when provider changes (but not on initial load)
   useEffect(() => {
+    // Skip the first render (initial load)
+    const isInitialLoad = terminalOutput.length === 0;
+    if (isInitialLoad) return;
+    
     // Clear terminal first
     resetTerminal([]);
     
@@ -77,7 +88,7 @@ function App() {
     addToTerminal('', 400);
     typeToTerminal(t('misc.ready'), 600);
     addToTerminal('', 1100);
-  }, [selectedProvider, resetTerminal, t]);
+  }, [selectedProvider]);
 
   const saveToHistory = async () => {
     if (results.length === 0) return;
