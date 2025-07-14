@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import { Settings, Clock, User } from 'lucide-react';
+import { Settings, Clock, Wifi } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { DOHProvider } from '../types';
 
@@ -119,33 +119,31 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
           {/* History Button */}
           <button
             onClick={onShowHistory}
-            className="flex items-center gap-2 text-xs text-gray-400 hover:text-green-400 transition-colors select-none"
+            className="text-gray-400 hover:text-green-400 transition-colors select-none p-1"
             disabled={isResolving}
             title={t('header.history')}
           >
-            <Clock className="w-3 h-3" />
-            <span>{t('header.history')}</span>
+            <Clock className="w-4 h-4" />
           </button>
           
           {/* Settings Button */}
           <button
             onClick={onShowSettings}
-            className="flex items-center gap-2 text-xs text-gray-400 hover:text-green-400 transition-colors select-none"
+            className="text-gray-400 hover:text-green-400 transition-colors select-none p-1"
             title={t('header.settings')}
           >
-            <User className="w-3 h-3" />
+            <Settings className="w-4 h-4" />
           </button>
           
           {/* DNS Provider Selector */}
           <div className="relative" ref={providerMenuRef}>
             <button
               onClick={onToggleProviderMenu}
-              className="flex items-center gap-2 text-xs text-gray-400 hover:text-green-400 transition-colors select-none"
+              className="flex items-center gap-2 text-gray-400 hover:text-green-400 transition-colors select-none p-1"
               title={selectedProvider.label}
               disabled={isResolving}
             >
-              <Settings className="w-3 h-3" />
-              <span>{selectedProvider.label}</span>
+              <Wifi className="w-4 h-4" />
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
             </button>
             
