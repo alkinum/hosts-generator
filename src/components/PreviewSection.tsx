@@ -171,6 +171,7 @@ export const PreviewSection: React.FC<PreviewSectionProps> = ({
                     <Copy className="w-3 h-3" />
                     {t('preview.copy')}
                   </>
+                )}
                 {t('preview.download')}
               </button>
               
@@ -180,7 +181,7 @@ export const PreviewSection: React.FC<PreviewSectionProps> = ({
                   className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white py-1 px-3 rounded text-xs transition-colors select-none"
                 >
                   <Download className="w-3 h-3" />
-                  {t('download', language)}
+                  {t('download')}
                 </button>
               )}
             </div>
