@@ -39,7 +39,7 @@ function App() {
     addToTerminal,
     typeToTerminal,
     resetTerminal
-  } = useTerminal();
+  } = useTerminal([
     `hosts-generator v${packageJson.version}`,
     `${t('generated.resolvedUsing', { provider: selectedProvider.label })}`,
     '',
