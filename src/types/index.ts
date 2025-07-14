@@ -13,4 +13,3 @@ export interface DOHProvider {
 export interface ValidationResult {
   domains: string[];
   errors: string[];
-}

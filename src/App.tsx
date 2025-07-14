@@ -11,6 +11,7 @@ import { validateDomains } from './utils/validation';
 import { historyDB } from './utils/indexedDB';
 import { DOH_PROVIDERS } from './utils/constants';
 import { DNSResult, DOHProvider } from './types';
+import packageJson from '../package.json';
 
 function App() {
   const [domains, setDomains] = useState('');
@@ -29,7 +30,7 @@ function App() {
     typeToTerminal,
     resetTerminal
   } = useTerminal([
-    'hosts-generator v2.1.0',
+    `hosts-generator v${packageJson.version}`,
     `DNS resolution via ${selectedProvider.label}`,
     '',
     'Ready to process domains...',
@@ -58,7 +59,7 @@ function App() {
   // Update terminal when provider changes
   useEffect(() => {
     resetTerminal([
-      'hosts-generator v2.1.0',
+      `hosts-generator v${packageJson.version}`,
       `DNS resolution via ${selectedProvider.label}`,
       '',
       'Ready to process domains...',
