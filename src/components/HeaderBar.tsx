@@ -124,27 +124,23 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
             {/* macOS fullscreen icon - changes based on state */}
             <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
               {isFullscreen ? (
-                // Exit fullscreen icon (shrink/compress arrows)
+                // Shrink icon (diagonal arrows pointing inward)
                 <svg width="8" height="8" viewBox="0 0 8 8" className="text-green-900">
                   <path
-                    d="M3 1L1 3M1 3h1.5M1 3v1.5M5 1L7 3M7 3h-1.5M7 3v1.5M3 7L1 5M1 5h1.5M1 5v-1.5M5 7L7 5M7 5h-1.5M7 5v-1.5"
+                    d="M2.5 1.5L1 3M5.5 1.5L7 3M2.5 6.5L1 5M5.5 6.5L7 5"
                     stroke="currentColor"
-                    strokeWidth="0.8"
-                    fill="none"
+                    strokeWidth="1"
                     strokeLinecap="round"
-                    strokeLinejoin="round"
                   />
                 </svg>
               ) : (
-                // Enter fullscreen icon (expand arrows)
+                // Expand icon (diagonal arrows pointing outward)
                 <svg width="8" height="8" viewBox="0 0 8 8" className="text-green-900">
                   <path
-                    d="M1 3L3 1M3 1v1.5M3 1h1.5M7 3L5 1M5 1v1.5M5 1h-1.5M1 5L3 7M3 7v-1.5M3 7h1.5M7 5L5 7M5 7v-1.5M5 7h-1.5"
+                    d="M1 2.5L2.5 1M1 5.5L2.5 7M7 2.5L5.5 1M7 5.5L5.5 7"
                     stroke="currentColor"
-                    strokeWidth="0.8"
-                    fill="none"
+                    strokeWidth="1"
                     strokeLinecap="round"
-                    strokeLinejoin="round"
                   />
                 </svg>
               )}
