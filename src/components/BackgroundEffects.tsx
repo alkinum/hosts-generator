@@ -75,41 +75,9 @@ export const BackgroundEffects: React.FC = () => {
             transformOrigin: 'center bottom',
             height: '800%',
             width: '400%',
-            left: '-150%'
-          }}
-        ></div>
-
-        {/* Secondary grid layer for depth */}
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: `
-              linear-gradient(rgba(0, 255, 0, 0.2) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(0, 255, 0, 0.2) 1px, transparent 1px)
-            `,
-            backgroundSize: '100px 100px',
-            transform: `rotateX(45deg) translateY(-70px) translateZ(-50px) scale(${gridScale * 4})`,
-            transformOrigin: 'center bottom',
-            height: '800%',
-            width: '400%',
-            left: '-150%'
-          }}
-        ></div>
-
-        {/* Distant grid layer */}
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: `
-              linear-gradient(rgba(0, 255, 0, 0.1) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(0, 255, 0, 0.1) 1px, transparent 1px)
-            `,
-            backgroundSize: '150px 150px',
-            transform: `rotateX(45deg) translateY(-90px) translateZ(-100px) scale(${gridScale * 4})`,
-            transformOrigin: 'center bottom',
-            height: '800%',
-            width: '400%',
-            left: '-150%'
+            left: '-150%',
+            filter: 'drop-shadow(0 0 8px rgba(0, 255, 0, 0.6)) drop-shadow(0 0 16px rgba(0, 255, 0, 0.3))',
+            animation: 'gridGlow 3s ease-in-out infinite alternate'
           }}
         ></div>
       </div>
@@ -146,7 +114,8 @@ export const BackgroundEffects: React.FC = () => {
             animation: 'fadeInOut 6s ease-in-out',
             animationDelay: `${particle.delay}s`,
             transform: `translateZ(${Math.sin(particle.x / 10) * 20}px)`,
-            filter: `blur(${Math.abs(Math.sin(particle.x / 10)) * 0.5}px)`
+            filter: `blur(${Math.abs(Math.sin(particle.x / 10)) * 0.5}px)`,
+            boxShadow: '0 0 6px rgba(0, 255, 0, 0.8), 0 0 12px rgba(0, 255, 0, 0.4)'
           }}
           onAnimationEnd={() => handleAnimationEnd(particle.id)}
         ></div>
@@ -157,6 +126,15 @@ export const BackgroundEffects: React.FC = () => {
           0% { opacity: 0; }
           50% { opacity: 0.6; }
           100% { opacity: 0; }
+        }
+        
+        @keyframes gridGlow {
+          0% { 
+            filter: drop-shadow(0 0 8px rgba(0, 255, 0, 0.6)) drop-shadow(0 0 16px rgba(0, 255, 0, 0.3));
+          }
+          100% { 
+            filter: drop-shadow(0 0 12px rgba(0, 255, 0, 0.8)) drop-shadow(0 0 24px rgba(0, 255, 0, 0.5)) drop-shadow(0 0 36px rgba(0, 255, 0, 0.2));
+          }
         }
       `}</style>
     </div>
