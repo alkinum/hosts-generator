@@ -1,3 +1,4 @@
+import { Github } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BackgroundEffects } from './components/BackgroundEffects';
@@ -425,6 +426,24 @@ const App: React.FC = () => {
             onRemoveCommentsChange={setRemoveComments}
             onDownload={downloadHostsFile}
           />
+
+          {/* Footer */}
+          <div className={`bg-gray-900 border-l border-r border-t border-b border-gray-700 rounded-b-lg px-3 py-2 flex items-center justify-between transition-all duration-500 ease-in-out ${
+            isMinimized ? 'h-0 opacity-0 pointer-events-none border-0' : 'h-auto opacity-100'
+          }`}>
+            <div className="flex items-center text-[0.625rem] text-gray-400">
+              <span>Made by Alkinum</span>
+            </div>
+            <a
+              href="https://github.com/alkinum/hosts-generator"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-1.5 text-gray-400 hover:text-green-400 hover:bg-gray-800/50 rounded transition-all duration-200 hover:scale-110"
+              title="View on GitHub"
+            >
+              <Github size={14} />
+            </a>
+          </div>
         </div>
       </div>
 

@@ -81,7 +81,7 @@ export const PreviewSection: React.FC<PreviewSectionProps> = ({
   const errorCount = results.filter(r => !r.ip).length;
 
   return (
-    <div className={`bg-gray-900 border border-gray-700 rounded-b-lg p-4 ${className}`}>
+    <div className={`bg-gray-900 border-l border-r border-t border-gray-700 p-4 ${className}`}>
       {/* Header with title and statistics */}
       <div className="mb-3 flex items-start justify-between">
         <div className="flex-1">
